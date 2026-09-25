@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { logoutAction } from '@/app/actions/auth';
@@ -34,6 +35,7 @@ export default function SidebarClient({
   userRole: string;
   pendingCount: number;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   function isActive(href: string, exact?: boolean) {
@@ -44,53 +46,74 @@ export default function SidebarClient({
   const isAdmin = userRole === 'admin' || userRole === 'lider';
 
   return (
-    <aside className={styles.sidebar}>
-      {/* Logo */}
-      <div className={styles.brand}>
-        <img src="/logo.png" alt="Jóvenes CON TODO" style={{ width: '80px', height: '80px', marginBottom: '12px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.1)' }} />
-        <span className={styles.brandGreeting}>Hola, {userName}</span>
-      </div>
+    <>
+      {/* Botón flotante para móviles */}
+      <button 
+        className={styles.mobileToggleBtn}
+        onClick={() => setIsOpen(true)}
+        aria-label="Abrir menú"
+      >
+        ☰
+      </button>
 
-      {/* Nav principal */}
-      <nav className={styles.nav}>
-        {NAV_ITEMS.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`${styles.link} ${isActive(item.href, item.exact) ? styles.linkActive : ''}`}
-            prefetch
-          >
-            {item.label}
-          </Link>
-        ))}
+      {/* Overlay oscuro para cerrar menú en móvil */}
+      {isOpen && (
+        <div 
+          className={styles.overlay} 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
-        {/* Admin */}
-        {isAdmin && (
-          <>
-            <div className={styles.section}>Administracion</div>
-            {ADMIN_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.link} ${isActive(item.href) ? styles.linkActive : ''}`}
-                prefetch
-              >
-                <span>{item.label}</span>
-                {item.badge && pendingCount > 0 && (
-                  <span className={styles.badge}>{pendingCount > 99 ? '99+' : pendingCount}</span>
-                )}
-              </Link>
-            ))}
-          </>
-        )}
-      </nav>
+      <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
+        {/* Logo */}
+        <div className={styles.brand}>
+          <img src="/logo.png" alt="Jóvenes CON TODO" style={{ width: '80px', height: '80px', marginBottom: '12px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.1)' }} />
+          <span className={styles.brandGreeting}>Hola, {userName}</span>
+        </div>
 
-      {/* Cerrar sesion */}
-      <form action={logoutAction} className={styles.logoutForm}>
-        <button type="submit" className={styles.logoutBtn}>
-          Cerrar Sesion
-        </button>
-      </form>
-    </aside>
+        {/* Nav principal */}
+        <nav className={styles.nav}>
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.link} ${isActive(item.href, item.exact) ? styles.linkActive : ''}`}
+              onClick={() => setIsOpen(false)}
+              prefetch
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          {/* Admin */}
+          {isAdmin && (
+            <>
+              <div className={styles.section}>Administracion</div>
+              {ADMIN_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.link} ${isActive(item.href) ? styles.linkActive : ''}`}
+                  onClick={() => setIsOpen(false)}
+                  prefetch
+                >
+                  <span>{item.label}</span>
+                  {item.badge && pendingCount > 0 && (
+                    <span className={styles.badge}>{pendingCount > 99 ? '99+' : pendingCount}</span>
+                  )}
+                </Link>
+              ))}
+            </>
+          )}
+        </nav>
+
+        {/* Cerrar sesion */}
+        <form action={logoutAction} className={styles.logoutForm}>
+          <button type="submit" className={styles.logoutBtn}>
+            Cerrar Sesion
+          </button>
+        </form>
+      </aside>
+    </>
   );
 }
