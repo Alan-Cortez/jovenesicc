@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/lideres', label: 'Tabla de Lideres' },
 ];
 
-const ADMIN_ITEMS = [
+const ADMIN_ITEMS: { href: string; label: string; badge?: boolean }[] = [
   { href: '/dashboard/admin/usuarios', label: 'Usuarios' },
   { href: '/dashboard/admin/grupos', label: 'Gestionar Grupos' },
   { href: '/dashboard/admin/planes', label: 'Gestionar Planes' },
