@@ -19,37 +19,53 @@ export default async function AdminCalendarioPage() {
     redirect('/login');
   }
 
-  const allEvents = await db.select().from(events).orderBy(desc(events.startAt));
+  const { remoteCalendarClient } = await import('@/lib/remoteDb');
+  const result = await remoteCalendarClient.execute("SELECT id, nombre, descripcion, fecha FROM events ORDER BY fecha ASC");
+  
+  const allEvents = result.rows.map(row => ({
+    id: row.id as number,
+    title: (row.nombre as string) || 'Sin título',
+    description: (row.descripcion as string) || '',
+    startAt: row.fecha as string,
+    location: ''
+  }));
 
   async function createEvent(formData: FormData) {
     'use server';
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
-    const location = formData.get('location') as string;
+    // La BD externa no soporta location, pero recibimos la fecha
     const startAt = formData.get('startAt') as string;
     
     if (!title || !startAt) return;
 
-    await db.insert(events).values({
-      title,
-      description,
-      location,
-      startAt,
-      createdBy: 1, // Assume admin id or we would get from auth context
+    const { remoteCalendarClient } = await import('@/lib/remoteDb');
+    await remoteCalendarClient.execute({
+      sql: "INSERT INTO events (nombre, descripcion, fecha) VALUES (?, ?, ?)",
+      args: [title, description, startAt]
     });
     
-    revalidatePath('/dashboard/admin/calendario');
-    revalidatePath('/dashboard/calendario');
+    import('next/cache').then(({ revalidatePath }) => {
+      revalidatePath('/dashboard/admin/calendario');
+      revalidatePath('/dashboard/calendario');
+    });
   }
 
   async function deleteEvent(formData: FormData) {
     'use server';
     const id = parseInt(formData.get('id') as string, 10);
     if (!id) return;
-    const { eq } = await import('drizzle-orm');
-    await db.delete(events).where(eq(events.id, id));
-    revalidatePath('/dashboard/admin/calendario');
-    revalidatePath('/dashboard/calendario');
+
+    const { remoteCalendarClient } = await import('@/lib/remoteDb');
+    await remoteCalendarClient.execute({
+      sql: "DELETE FROM events WHERE id = ?",
+      args: [id]
+    });
+
+    import('next/cache').then(({ revalidatePath }) => {
+      revalidatePath('/dashboard/admin/calendario');
+      revalidatePath('/dashboard/calendario');
+    });
   }
 
   return (

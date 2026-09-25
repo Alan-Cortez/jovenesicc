@@ -18,23 +18,23 @@ export default async function CalendarioPage() {
     redirect('/login');
   }
 
-  // Traer eventos
-  const allEvents = await db
-    .select()
-    .from(events)
-    .orderBy(desc(events.startAt)); // FIX: era event.date, el campo correcto es startAt
+  // Traer eventos de la base de datos externa
+  const { remoteCalendarClient } = await import('@/lib/remoteDb');
+  const result = await remoteCalendarClient.execute("SELECT id, nombre, descripcion, fecha FROM events ORDER BY fecha ASC");
+  
+  const allEvents = result.rows.map(row => ({
+    id: row.id as number,
+    title: (row.nombre as string) || 'Sin título',
+    description: (row.descripcion as string) || '',
+    location: '', // La bd externa no tiene location
+    startAt: row.fecha as string,
+    endAt: null
+  }));
 
   return (
     <CalendarioClient 
       userId={user.id} 
-      events={allEvents.map(e => ({
-        id: e.id,
-        title: e.title,
-        description: e.description ?? '',
-        location: e.location ?? '',
-        startAt: e.startAt,
-        endAt: e.endAt ?? null
-      }))} 
+      events={allEvents} 
     />
   );
 }
