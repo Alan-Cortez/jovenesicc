@@ -20,7 +20,12 @@ export default async function CalendarioPage() {
 
   // Traer eventos de la base de datos externa
   const { remoteCalendarClient } = await import('@/lib/remoteDb');
-  const result = await remoteCalendarClient.execute("SELECT id, nombre, descripcion, fecha FROM events ORDER BY fecha ASC");
+  const result = await remoteCalendarClient.execute(`
+    SELECT e.id, e.nombre, e.descripcion, e.fecha, m.nombre as ministerio 
+    FROM events e 
+    LEFT JOIN ministries m ON e.ministry_id = m.id 
+    ORDER BY e.fecha ASC
+  `);
   
   const allEvents = result.rows.map(row => ({
     id: row.id as number,
@@ -28,7 +33,8 @@ export default async function CalendarioPage() {
     description: (row.descripcion as string) || '',
     location: '', // La bd externa no tiene location
     startAt: row.fecha as string,
-    endAt: null
+    endAt: null,
+    category: (row.ministerio as string) || 'General'
   }));
 
   return (
