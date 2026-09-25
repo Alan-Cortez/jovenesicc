@@ -1,0 +1,453 @@
+'use client';
+
+import { useState } from 'react';
+import PerfilSettingsForm from './SettingsForm';
+import SocialFeed from '../SocialFeed';
+import styles from './perfil.module.css';
+
+type UserData = {
+  id: number;
+  name: string;
+  email: string;
+  matricula: string;
+  role: string;
+  avatar: string | null;
+  groupId: number | null;
+  groupName: string;
+  xp: number;
+  totalXp: number;
+  level: number;
+  streakCurrent: number;
+  streakBest: number;
+  xpForNextLevel: number;
+  xpProgress: number;
+  joinedAt: string;
+  shareDevotionals: number;
+};
+
+type FeedItem = {
+  id: string;
+  type: 'xp' | 'devotional' | 'prayer' | 'mission';
+  title: string;
+  subtitle: string;
+  detail: string;
+  date: string;
+  xp?: number;
+  status?: string;
+};
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Administrador',
+  lider: 'Lider',
+  joven: 'Joven',
+};
+
+// Etiquetas de tipo de item del feed
+const FEED_TYPE_LABEL: Record<FeedItem['type'], string> = {
+  xp: 'Experiencia',
+  devotional: 'Devocional',
+  prayer: 'Oracion',
+  mission: 'Mision',
+};
+
+export default function PerfilClient({
+  user,
+  currentTheme,
+  feed,
+  posts,
+}: {
+  user: UserData;
+  currentTheme: string;
+  feed: FeedItem[];
+  posts?: any[];
+}) {
+  const [activeTab, setActiveTab] = useState<
+    'inicio' | 'publicaciones' | 'configuracion'
+  >('inicio');
+
+  const [feedFilter, setFeedFilter] = useState<FeedItem['type'] | 'all'>('all');
+
+  const tabs = [
+    { key: 'inicio', label: 'Actividad' },
+    { key: 'publicaciones', label: 'Mis Publicaciones' },
+    { key: 'configuracion', label: 'Configuracion' },
+  ] as const;
+
+  // Logros basados en datos reales
+  const allBadges = [
+    { label: 'Bienvenido', desc: 'Te uniste a la comunidad', unlocked: true },
+    { label: 'Primer nivel', desc: 'Alcanzaste el nivel 1', unlocked: user.level >= 1 },
+    { label: 'Racha de 7 dias', desc: 'Mantuviste 7 dias seguidos', unlocked: user.streakBest >= 7 },
+    { label: 'Racha de 30 dias', desc: 'Mantuviste 30 dias seguidos', unlocked: user.streakBest >= 30 },
+    { label: 'Nivel 5', desc: 'Alcanzaste el nivel 5', unlocked: user.level >= 5 },
+    { label: '1000 XP', desc: 'Acumulaste 1000 puntos', unlocked: user.totalXp >= 1000 },
+    { label: '5000 XP', desc: 'Acumulaste 5000 puntos', unlocked: user.totalXp >= 5000 },
+  ];
+
+  const unlocked = allBadges.filter((b) => b.unlocked);
+  const locked = allBadges.filter((b) => !b.unlocked);
+
+  const filteredFeed =
+    feedFilter === 'all' ? feed : feed.filter((f) => f.type === feedFilter);
+
+  return (
+    <div className={styles.root}>
+
+      {/* ── HEADER DE PERFIL ── */}
+      <div className={styles.header}>
+        <div className={styles.cover} />
+
+        <div className={styles.headerBody}>
+          <div className={styles.avatarWrap}>
+            {user.avatar ? (
+              <img src={user.avatar} alt="Avatar" className={styles.avatar} />
+            ) : (
+              <div className={styles.avatarFallback}>
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.userInfo}>
+            <h1 className={styles.userName}>{user.name}</h1>
+            <p className={styles.userSub}>
+              {ROLE_LABELS[user.role] ?? user.role}
+              {' · '}{user.groupName}
+            </p>
+          </div>
+
+          <div className={styles.quickStats}>
+            <div className={styles.qStat}>
+              <span className={styles.qVal}>{user.level}</span>
+              <span className={styles.qLbl}>Nivel</span>
+            </div>
+            <div className={styles.qDivider} />
+            <div className={styles.qStat}>
+              <span className={styles.qVal}>{user.totalXp.toLocaleString()}</span>
+              <span className={styles.qLbl}>XP Total</span>
+            </div>
+            <div className={styles.qDivider} />
+            <div className={styles.qStat}>
+              <span className={styles.qVal}>{user.streakCurrent}</span>
+              <span className={styles.qLbl}>Racha</span>
+            </div>
+            <div className={styles.qDivider} />
+            <div className={styles.qStat}>
+              <span className={styles.qVal}>{feed.length}</span>
+              <span className={styles.qLbl}>Actividades</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.tabBar}>
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              className={`${styles.tab} ${activeTab === t.key ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab(t.key)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── CONTENIDO ── */}
+      <div className={styles.content}>
+
+        {/* ──── INICIO ──── */}
+        {activeTab === 'inicio' && (
+          <div className={styles.twoCol}>
+
+            {/* Columna izquierda */}
+            <div className={styles.aside}>
+
+              {/* Acerca de */}
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Acerca de mi</h3>
+                <ul className={styles.infoList}>
+                  <li>
+                    <span className={styles.infoLabel}>Nombre</span>
+                    <span className={styles.infoValue}>{user.name}</span>
+                  </li>
+                  <li>
+                    <span className={styles.infoLabel}>Rol</span>
+                    <span className={styles.infoValue}>{ROLE_LABELS[user.role] ?? user.role}</span>
+                  </li>
+                  <li>
+                    <span className={styles.infoLabel}>Grupo</span>
+                    <span className={styles.infoValue}>{user.groupName}</span>
+                  </li>
+                  {user.email && (
+                    <li>
+                      <span className={styles.infoLabel}>Correo</span>
+                      <span className={styles.infoValue}>{user.email}</span>
+                    </li>
+                  )}
+                  <li>
+                    <span className={styles.infoLabel}>Miembro desde</span>
+                    <span className={styles.infoValue}>{formatDate(user.joinedAt)}</span>
+                  </li>
+                  <li>
+                    <span className={styles.infoLabel}>Privacidad</span>
+                    <span className={styles.infoValue}>Perfil privado</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Progreso de nivel */}
+              <div className={styles.panel}>
+                <div className={styles.xpHeader}>
+                  <h3 className={styles.panelTitle} style={{ marginBottom: 0 }}>Nivel</h3>
+                  <span className={styles.levelPill}>Nivel {user.level}</span>
+                </div>
+                <p className={styles.xpSub}>
+                  {user.xp.toLocaleString()} / {user.xpForNextLevel.toLocaleString()} XP
+                </p>
+                <div className={styles.xpTrack}>
+                  <div className={styles.xpFill} style={{ width: `${user.xpProgress}%` }} />
+                </div>
+                <p className={styles.xpPct}>{Math.round(user.xpProgress)}% hacia el nivel {user.level + 1}</p>
+              </div>
+
+              {/* Logros resumidos */}
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Logros ({unlocked.length}/{allBadges.length})</h3>
+                {unlocked.length === 0 ? (
+                  <p className={styles.empty}>Completa actividades para desbloquear logros.</p>
+                ) : (
+                  <div className={styles.badgeMini}>
+                    {unlocked.map((b) => (
+                      <div key={b.label} className={styles.badgeMiniItem}>
+                        <div className={styles.badgeDot} />
+                        <span>{b.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ─── COLUMNA PRINCIPAL: FEED ─── */}
+            <div className={styles.main}>
+
+              {/* Filtros del feed */}
+              <div className={styles.feedFilters}>
+                {(['all', 'xp', 'devotional', 'prayer', 'mission'] as const).map((f) => (
+                  <button
+                    key={f}
+                    className={`${styles.filterBtn} ${feedFilter === f ? styles.filterBtnActive : ''}`}
+                    onClick={() => setFeedFilter(f)}
+                  >
+                    {f === 'all' ? 'Todo' : FEED_TYPE_LABEL[f]}
+                  </button>
+                ))}
+              </div>
+
+              {/* Items del feed */}
+              {filteredFeed.length === 0 ? (
+                <div className={styles.panel}>
+                  <p className={styles.empty}>
+                    {feedFilter === 'all'
+                      ? 'No hay actividad registrada aun. Completa lecturas, misiones o escribe devocionales.'
+                      : `No hay actividad de tipo "${FEED_TYPE_LABEL[feedFilter]}" registrada.`}
+                  </p>
+                </div>
+              ) : (
+                filteredFeed.map((item) => (
+                  <FeedCard key={item.id} item={item} user={user} />
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ──── MIS PUBLICACIONES ──── */}
+        {activeTab === 'publicaciones' && (
+          <div className={styles.singleCol}>
+            <div className={styles.panel}>
+              <h3 className={styles.panelTitle}>Mis Publicaciones</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '16px' }}>
+                Aquí puedes ver todas tus publicaciones. Se muestran cronológicamente.
+              </p>
+              {posts ? (
+                <SocialFeed 
+                  posts={posts} 
+                  currentUserId={user.id} 
+                  currentUserAvatar={user.avatar}
+                  currentUserName={user.name}
+                />
+              ) : (
+                <p>Cargando publicaciones...</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ──── CONFIGURACION ──── */}
+        {activeTab === 'configuracion' && (
+          <div className={styles.twoCol}>
+            <div className={styles.aside}>
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Configuracion de cuenta</h3>
+                <PerfilSettingsForm
+                  initialName={user.name}
+                  initialAvatar={user.avatar}
+                  initialEmail={user.email}
+                  initialPhone={(user as any).phone}
+                  initialBirthDate={(user as any).birthDate}
+                  currentTheme={currentTheme}
+                />
+              </div>
+            </div>
+            <div className={styles.main}>
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Preferencias de la app</h3>
+                <div className={styles.prefList}>
+                  <PrefRow title="Notificaciones" desc="Recibir alertas de nuevos devocionales y misiones." defaultChecked />
+                  <PrefRow title="XP publico" desc="Hacer que mi XP sea visible en la tabla de lideres." defaultChecked />
+                  <PrefRow title="Compartir devocionales" desc="Permitir que tus lideres vean tus devocionales." defaultChecked={!!user.shareDevotionals} />
+                </div>
+              </div>
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Seguridad</h3>
+                <div className={styles.secList}>
+                  <SecRow title="Contrasena establecida" desc="Tu cuenta esta protegida con contrasena." ok />
+                  <SecRow title="Perfil privado activo" desc="Solo miembros de la comunidad pueden verte." ok />
+                  <SecRow
+                    title={user.email ? 'Correo registrado' : 'Correo no registrado'}
+                    desc={user.email || 'Agrega un correo en Configuracion de Cuenta.'}
+                    ok={!!user.email}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Feed Card ── */
+function FeedCard({ item, user }: { item: FeedItem; user: UserData }) {
+  // Tipo de borde lateral por tipo
+  const borderClass: Record<FeedItem['type'], string> = {
+    xp:         styles.feedBorderXp,
+    devotional: styles.feedBorderDevotional,
+    prayer:     styles.feedBorderPrayer,
+    mission:    styles.feedBorderMission,
+  };
+
+  const typeLabel = FEED_TYPE_LABEL[item.type];
+
+  return (
+    <div className={`${styles.feedCard} ${borderClass[item.type]}`}>
+      {/* Header de la tarjeta */}
+      <div className={styles.feedCardHeader}>
+        {/* Avatar pequeño del usuario */}
+        <div className={styles.feedAvatar}>
+          {user.avatar ? (
+            <img src={user.avatar} alt="" className={styles.feedAvatarImg} />
+          ) : (
+            <div className={styles.feedAvatarFallback}>
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className={styles.feedMeta}>
+          <span className={styles.feedAuthor}>{user.name}</span>
+          <div className={styles.feedMetaRow}>
+            <span className={styles.feedType}>{typeLabel}</span>
+            <span className={styles.feedDot}>·</span>
+            <span className={styles.feedDate}>{formatDateRelative(item.date)}</span>
+          </div>
+        </div>
+        {/* XP ganado (si aplica) */}
+        {item.xp !== undefined && item.xp > 0 && (
+          <span className={styles.feedXpBadge}>+{item.xp} XP</span>
+        )}
+      </div>
+
+      {/* Cuerpo */}
+      <div className={styles.feedBody}>
+        <p className={styles.feedTitle}>{item.title}</p>
+        {item.subtitle && (
+          <p className={styles.feedSubtitle}>{item.subtitle}</p>
+        )}
+      </div>
+
+      {/* Footer con estado */}
+      <div className={styles.feedFooter}>
+        <span className={`${styles.feedStatus} ${getStatusClass(item.status, styles)}`}>
+          {item.detail}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function getStatusClass(status: string | undefined, styles: Record<string, string>): string {
+  if (!status) return '';
+  if (status === 'approved' || status === 'reviewed' || status === 'answered') return styles.statusOk;
+  if (status === 'rejected') return styles.statusBad;
+  return styles.statusNeutral;
+}
+
+/* ── Subcomponentes reutilizables ── */
+function PrefRow({ title, desc, defaultChecked }: { title: string; desc: string; defaultChecked: boolean }) {
+  return (
+    <div className={styles.prefItem}>
+      <div>
+        <p className={styles.prefTitle}>{title}</p>
+        <p className={styles.prefDesc}>{desc}</p>
+      </div>
+      <label className={styles.toggle}>
+        <input type="checkbox" defaultChecked={defaultChecked} />
+        <span className={styles.toggleSlider} />
+      </label>
+    </div>
+  );
+}
+
+function SecRow({ title, desc, ok }: { title: string; desc: string; ok: boolean }) {
+  return (
+    <div className={styles.secItem}>
+      <div className={`${styles.secIndicator} ${ok ? styles.secOk : styles.secWarn}`} />
+      <div>
+        <p className={styles.secTitle}>{title}</p>
+        <p className={styles.secDesc}>{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ── Utilidades de fecha ── */
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return 'Recientemente';
+    return d.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+  } catch {
+    return 'Recientemente';
+  }
+}
+
+function formatDateRelative(dateStr: string): string {
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return 'Recientemente';
+    const now = Date.now();
+    const diff = now - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    const hrs = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (mins < 1) return 'Ahora';
+    if (mins < 60) return `Hace ${mins} min`;
+    if (hrs < 24) return `Hace ${hrs} h`;
+    if (days < 7) return `Hace ${days} dia${days !== 1 ? 's' : ''}`;
+    return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+  } catch {
+    return 'Recientemente';
+  }
+}

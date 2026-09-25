@@ -1,0 +1,91 @@
+/* devocionales.module.css */
+.root { padding: 32px; display: flex; flex-direction: column; gap: 24px; max-width: 960px; margin: 0 auto; }
+.pageHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.pageTitle { font-size: 1.7rem; font-weight: 800; color: var(--color-text-main); font-family: var(--font-heading); margin-bottom: 4px; }
+.pageSub { font-size: 0.82rem; color: var(--color-text-muted); }
+
+.newBtn { background: var(--color-primary); color: var(--color-tertiary); border: none; border-radius: 8px; padding: 9px 18px; font-size: 0.84rem; font-weight: 700; cursor: pointer; font-family: var(--font-sans); white-space: nowrap; transition: opacity 0.15s; flex-shrink: 0; }
+.newBtn:hover { opacity: 0.88; }
+
+/* Stats Row */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px 12px;
+}
+
+.statNumber {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.emptyCard { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 40px 32px; text-align: center; font-size: 0.88rem; color: var(--color-text-muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+/* Tarjeta */
+.card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+
+.cardTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+
+.date { font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.planTag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(74, 226, 144, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.bibleRef {
+  font-size: 0.78rem;
+  color: rgba(74, 144, 226, 0.9);
+  font-weight: 600;
+  margin: 0;
+}
+
+.content { font-size: 0.92rem; color: var(--color-text-main); line-height: 1.5; flex: 1; font-style: italic; }
+
+.footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: auto; }
+
+.privacy { font-size: 0.75rem; font-weight: 600; }
+.privacyPublic { color: var(--color-primary); }
+.privacyPrivate { color: var(--color-text-muted); }
+
+.actionBtn { background: transparent; border: 1px solid var(--glass-border); color: var(--color-text-muted); font-size: 0.75rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: var(--font-sans); transition: all 0.15s; }
+.actionBtn:hover { border-color: rgba(255,255,255,0.3); color: var(--color-primary); background: rgba(255,255,255,0.05); }
+
+.deleteBtn { background: transparent; border: 1px solid rgba(255, 71, 87, 0.3); color: rgba(255, 71, 87, 0.7); font-size: 0.75rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: var(--font-sans); transition: all 0.15s; }
+.deleteBtn:hover { border-color: #ff4757; color: #ff4757; background: rgba(255, 71, 87, 0.08); }
+
+@media (max-width: 600px) {
+  .root { padding: 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .pageHeader { flex-direction: column; align-items: flex-start; }
+  .statsRow { grid-template-columns: 1fr; }
+}

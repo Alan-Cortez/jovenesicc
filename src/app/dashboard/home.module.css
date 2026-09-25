@@ -1,0 +1,466 @@
+/* home.module.css — Dashboard home page */
+
+/* ─── ROOT ─── */
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ─── BANNER ─── */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bannerPhotos {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Sin fotos: fondo de relleno */
+.bannerPhotoPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-secondary) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.placeholderPattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 40%, rgba(255,255,255,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 50%);
+}
+
+/* 1 sola foto */
+.bannerSingle {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Cuadricula de 2–4 fotos */
+.bannerGrid {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  gap: 2px;
+}
+
+.grid2 { grid-template-columns: 1fr 1fr; }
+
+.grid3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.grid3 > :first-child {
+  grid-row: span 2;
+}
+
+.grid4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.bannerGridImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Carrusel (mas de 4 fotos) */
+.bannerCarousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--glass-border);
+  color: var(--color-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  transition: background 0.2s;
+  padding: 0;
+}
+.carouselBtn:hover { background: rgba(0,0,0,0.75); }
+
+.carouselPrev { left: 12px; }
+.carouselNext { right: 12px; }
+
+.carouselDots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+}
+.dotActive { background: var(--color-primary); }
+
+/* Overlay sobre el banner */
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 28px 32px;
+  z-index: 2;
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bannerSub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+}
+
+.bannerHeadline {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  line-height: 1.05;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+
+.editBannerBtn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+.editBannerBtn:hover { background: rgba(255,255,255,0.2); }
+
+/* ─── BODY ─── */
+.body {
+  padding: 28px 32px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Tarjeta de saludo */
+.greetCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 18px 22px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--glass-shadow);
+}
+
+.greetAvatar { flex-shrink: 0; }
+
+.greetAvatarImg {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--glass-border);
+}
+
+.greetAvatarFallback {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  border: 2px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+}
+
+.greetText { flex: 1; min-width: 0; }
+
+.greetName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-family: var(--font-heading);
+  margin-bottom: 3px;
+}
+
+.greetDetail {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.greetLink {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border: 1px solid var(--glass-border);
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.greetLink:hover {
+  color: var(--color-primary);
+  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ─── DOS COLUMNAS ─── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ─── FEED LAYOUT (Izquierda Feed, Derecha Widgets) ─── */
+.feedLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.col { display: flex; flex-direction: column; gap: 12px; }
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.sectionTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-family: var(--font-heading);
+}
+
+.sectionAction {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border: 1px solid var(--glass-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.sectionAction:hover { color: var(--color-primary); border-color: rgba(255,255,255,0.25); }
+
+/* Anuncio vacío */
+.emptyCard {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+}
+
+/* Tarjeta de anuncio */
+.annoCard {
+  display: flex;
+  gap: 14px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow 0.2s ease;
+}
+.annoCard:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+
+.annoDot {
+  width: 3px;
+  border-radius: 3px;
+  background: var(--color-primary);
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 100%;
+}
+
+.annoBody { flex: 1; min-width: 0; }
+
+.annoTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-family: var(--font-heading);
+  margin-bottom: 5px;
+}
+
+.annoContent {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.annoDate {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+/* Action Cards in Agenda */
+.actionCard {
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.actionBtn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: opacity 0.2s;
+}
+.actionBtn:hover { opacity: 0.9; }
+
+.actionBtnSecondary {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 15px;
+  background-color: transparent;
+  color: var(--color-text-main);
+  border: 1px solid var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.actionBtnSecondary:hover { 
+  border-color: var(--color-text-main); 
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Accesos rapidos */
+.quickLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quickLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.quickLink:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateX(3px);
+}
+
+.quickLinkLabel {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 2px;
+}
+
+.quickLinkDesc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.quickLinkArrow {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.quickLink:hover .quickLinkArrow { color: var(--color-primary); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .twoCol { grid-template-columns: 1fr; }
+  .feedLayout { grid-template-columns: 1fr; }
+  .banner { height: 240px; }
+  .bannerHeadline { font-size: 2rem; }
+  .body { padding: 20px 16px 40px; }
+}
+
+@media (max-width: 480px) {
+  .banner { height: 200px; }
+  .bannerHeadline { font-size: 1.6rem; }
+  .bannerOverlay { padding: 20px 16px; }
+}

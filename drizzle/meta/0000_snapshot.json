@@ -1,0 +1,2668 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "groups": {
+      "name": "groups",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leader_id": {
+          "autoincrement": false,
+          "name": "leader_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "matricula": {
+          "autoincrement": false,
+          "name": "matricula",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password_hash": {
+          "autoincrement": false,
+          "name": "password_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "default": "'joven'",
+          "autoincrement": false,
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avatar": {
+          "autoincrement": false,
+          "name": "avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "group_id": {
+          "autoincrement": false,
+          "name": "group_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "xp": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "xp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "streak_current": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "streak_current",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "streak_best": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "streak_best",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_read_date": {
+          "autoincrement": false,
+          "name": "last_read_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "share_devotionals": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "share_devotionals",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "joined_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "joined_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "users_group_id_groups_id_fk": {
+          "name": "users_group_id_groups_id_fk",
+          "tableFrom": "users",
+          "tableTo": "groups",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "reading_plans": {
+      "name": "reading_plans",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_days": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "autoincrement": false,
+          "name": "created_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "reading_plans_created_by_users_id_fk": {
+          "name": "reading_plans_created_by_users_id_fk",
+          "tableFrom": "reading_plans",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "reading_plan_days": {
+      "name": "reading_plan_days",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "plan_id": {
+          "autoincrement": false,
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day_number": {
+          "autoincrement": false,
+          "name": "day_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bible_refs": {
+          "autoincrement": false,
+          "name": "bible_refs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "xp_reward": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "xp_reward",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "reading_plan_days_plan_id_reading_plans_id_fk": {
+          "name": "reading_plan_days_plan_id_reading_plans_id_fk",
+          "tableFrom": "reading_plan_days",
+          "tableTo": "reading_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "plan_assignments": {
+      "name": "plan_assignments",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "plan_id": {
+          "autoincrement": false,
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "assigned_to": {
+          "autoincrement": false,
+          "name": "assigned_to",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "autoincrement": false,
+          "name": "group_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_date": {
+          "autoincrement": false,
+          "name": "start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "plan_assignments_user_id_users_id_fk": {
+          "name": "plan_assignments_user_id_users_id_fk",
+          "tableFrom": "plan_assignments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plan_assignments_group_id_groups_id_fk": {
+          "name": "plan_assignments_group_id_groups_id_fk",
+          "tableFrom": "plan_assignments",
+          "tableTo": "groups",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plan_assignments_plan_id_reading_plans_id_fk": {
+          "name": "plan_assignments_plan_id_reading_plans_id_fk",
+          "tableFrom": "plan_assignments",
+          "tableTo": "reading_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "reading_progress": {
+      "name": "reading_progress",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_id": {
+          "autoincrement": false,
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_day_id": {
+          "autoincrement": false,
+          "name": "plan_day_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'locked'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed_at": {
+          "autoincrement": false,
+          "name": "completed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_catch_up": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_catch_up",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "reading_progress_plan_day_id_reading_plan_days_id_fk": {
+          "name": "reading_progress_plan_day_id_reading_plan_days_id_fk",
+          "tableFrom": "reading_progress",
+          "tableTo": "reading_plan_days",
+          "columnsFrom": [
+            "plan_day_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reading_progress_plan_id_reading_plans_id_fk": {
+          "name": "reading_progress_plan_id_reading_plans_id_fk",
+          "tableFrom": "reading_progress",
+          "tableTo": "reading_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reading_progress_user_id_users_id_fk": {
+          "name": "reading_progress_user_id_users_id_fk",
+          "tableFrom": "reading_progress",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "devotionals": {
+      "name": "devotionals",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_day_id": {
+          "autoincrement": false,
+          "name": "plan_day_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "what_i_read": {
+          "autoincrement": false,
+          "name": "what_i_read",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "what_i_understood": {
+          "autoincrement": false,
+          "name": "what_i_understood",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "what_god_told_me": {
+          "autoincrement": false,
+          "name": "what_god_told_me",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "what_i_practice": {
+          "autoincrement": false,
+          "name": "what_i_practice",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'draft'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_public": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_public",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "devotionals_plan_day_id_reading_plan_days_id_fk": {
+          "name": "devotionals_plan_day_id_reading_plan_days_id_fk",
+          "tableFrom": "devotionals",
+          "tableTo": "reading_plan_days",
+          "columnsFrom": [
+            "plan_day_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "devotionals_user_id_users_id_fk": {
+          "name": "devotionals_user_id_users_id_fk",
+          "tableFrom": "devotionals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "devotional_reactions": {
+      "name": "devotional_reactions",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "devotional_id": {
+          "autoincrement": false,
+          "name": "devotional_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "autoincrement": false,
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "devotional_reactions_user_id_users_id_fk": {
+          "name": "devotional_reactions_user_id_users_id_fk",
+          "tableFrom": "devotional_reactions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "devotional_reactions_devotional_id_devotionals_id_fk": {
+          "name": "devotional_reactions_devotional_id_devotionals_id_fk",
+          "tableFrom": "devotional_reactions",
+          "tableTo": "devotionals",
+          "columnsFrom": [
+            "devotional_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "tasks": {
+      "name": "tasks",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "assigned_to": {
+          "autoincrement": false,
+          "name": "assigned_to",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "autoincrement": false,
+          "name": "group_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "evidence_type": {
+          "default": "'none'",
+          "autoincrement": false,
+          "name": "evidence_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "xp_reward": {
+          "default": 20,
+          "autoincrement": false,
+          "name": "xp_reward",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deadline": {
+          "autoincrement": false,
+          "name": "deadline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "autoincrement": false,
+          "name": "created_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "tasks_created_by_users_id_fk": {
+          "name": "tasks_created_by_users_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tasks_user_id_users_id_fk": {
+          "name": "tasks_user_id_users_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tasks_group_id_groups_id_fk": {
+          "name": "tasks_group_id_groups_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "groups",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "task_submissions": {
+      "name": "task_submissions",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "task_id": {
+          "autoincrement": false,
+          "name": "task_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "evidence": {
+          "autoincrement": false,
+          "name": "evidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "default": "'pending'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "review_note": {
+          "autoincrement": false,
+          "name": "review_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewed_by": {
+          "autoincrement": false,
+          "name": "reviewed_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewed_at": {
+          "autoincrement": false,
+          "name": "reviewed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submitted_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "submitted_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "task_submissions_reviewed_by_users_id_fk": {
+          "name": "task_submissions_reviewed_by_users_id_fk",
+          "tableFrom": "task_submissions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "reviewed_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "task_submissions_user_id_users_id_fk": {
+          "name": "task_submissions_user_id_users_id_fk",
+          "tableFrom": "task_submissions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "task_submissions_task_id_tasks_id_fk": {
+          "name": "task_submissions_task_id_tasks_id_fk",
+          "tableFrom": "task_submissions",
+          "tableTo": "tasks",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "xp_log": {
+      "name": "xp_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "autoincrement": false,
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_type": {
+          "autoincrement": false,
+          "name": "source_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_id": {
+          "autoincrement": false,
+          "name": "source_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "granted_by": {
+          "autoincrement": false,
+          "name": "granted_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "xp_log_granted_by_users_id_fk": {
+          "name": "xp_log_granted_by_users_id_fk",
+          "tableFrom": "xp_log",
+          "tableTo": "users",
+          "columnsFrom": [
+            "granted_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "xp_log_user_id_users_id_fk": {
+          "name": "xp_log_user_id_users_id_fk",
+          "tableFrom": "xp_log",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "badges": {
+      "name": "badges",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icon": {
+          "autoincrement": false,
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color": {
+          "default": "'#C8F135'",
+          "autoincrement": false,
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trigger_type": {
+          "default": "'manual'",
+          "autoincrement": false,
+          "name": "trigger_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trigger_condition": {
+          "autoincrement": false,
+          "name": "trigger_condition",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "user_badges": {
+      "name": "user_badges",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "badge_id": {
+          "autoincrement": false,
+          "name": "badge_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "granted_by": {
+          "autoincrement": false,
+          "name": "granted_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "granted_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "granted_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_badges_granted_by_users_id_fk": {
+          "name": "user_badges_granted_by_users_id_fk",
+          "tableFrom": "user_badges",
+          "tableTo": "users",
+          "columnsFrom": [
+            "granted_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_badges_badge_id_badges_id_fk": {
+          "name": "user_badges_badge_id_badges_id_fk",
+          "tableFrom": "user_badges",
+          "tableTo": "badges",
+          "columnsFrom": [
+            "badge_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_badges_user_id_users_id_fk": {
+          "name": "user_badges_user_id_users_id_fk",
+          "tableFrom": "user_badges",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "streak_history": {
+      "name": "streak_history",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "completed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_catch_up": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_catch_up",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "streak_history_user_id_users_id_fk": {
+          "name": "streak_history_user_id_users_id_fk",
+          "tableFrom": "streak_history",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "prayer_requests": {
+      "name": "prayer_requests",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "autoincrement": false,
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_public": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_public",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_anonymous": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_anonymous",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'praying'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answered_at": {
+          "autoincrement": false,
+          "name": "answered_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "prayer_requests_user_id_users_id_fk": {
+          "name": "prayer_requests_user_id_users_id_fk",
+          "tableFrom": "prayer_requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "events": {
+      "name": "events",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "autoincrement": false,
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_at": {
+          "autoincrement": false,
+          "name": "start_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_at": {
+          "autoincrement": false,
+          "name": "end_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_recurring": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_recurring",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recurrence_rule": {
+          "autoincrement": false,
+          "name": "recurrence_rule",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "autoincrement": false,
+          "name": "created_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "events_created_by_users_id_fk": {
+          "name": "events_created_by_users_id_fk",
+          "tableFrom": "events",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "event_attendance": {
+      "name": "event_attendance",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "event_id": {
+          "autoincrement": false,
+          "name": "event_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'confirmed'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "confirmed_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "confirmed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "event_attendance_user_id_users_id_fk": {
+          "name": "event_attendance_user_id_users_id_fk",
+          "tableFrom": "event_attendance",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "event_attendance_event_id_events_id_fk": {
+          "name": "event_attendance_event_id_events_id_fk",
+          "tableFrom": "event_attendance",
+          "tableTo": "events",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "announcements": {
+      "name": "announcements",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "autoincrement": false,
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_id": {
+          "autoincrement": false,
+          "name": "author_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_pinned": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_pinned",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "published_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "autoincrement": false,
+          "name": "expires_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "announcements_author_id_users_id_fk": {
+          "name": "announcements_author_id_users_id_fk",
+          "tableFrom": "announcements",
+          "tableTo": "users",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    },
+    "notifications": {
+      "name": "notifications",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body": {
+          "autoincrement": false,
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_read": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_read",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_id": {
+          "autoincrement": false,
+          "name": "related_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(datetime('now'))",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "notifications_user_id_users_id_fk": {
+          "name": "notifications_user_id_users_id_fk",
+          "tableFrom": "notifications",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "users_check_1": {
+          "name": "users_check_1",
+          "value": "role IN ('joven','lider','admin'"
+        },
+        "plan_assignments_check_2": {
+          "name": "plan_assignments_check_2",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "reading_progress_check_3": {
+          "name": "reading_progress_check_3",
+          "value": "status IN ('available','completed','late','locked'"
+        },
+        "devotionals_check_4": {
+          "name": "devotionals_check_4",
+          "value": "status IN ('draft','submitted','reviewed'"
+        },
+        "devotional_reactions_check_5": {
+          "name": "devotional_reactions_check_5",
+          "value": "type IN ('like','fire','heart','pray'"
+        },
+        "tasks_check_6": {
+          "name": "tasks_check_6",
+          "value": "assigned_to IN ('all','group','individual'"
+        },
+        "tasks_check_7": {
+          "name": "tasks_check_7",
+          "value": "evidence_type IN ('none','text','media','file'"
+        },
+        "task_submissions_check_8": {
+          "name": "task_submissions_check_8",
+          "value": "status IN ('pending','submitted','approved','rejected'"
+        },
+        "xp_log_check_9": {
+          "name": "xp_log_check_9",
+          "value": "source_type IN ('reading','devotional','task','badge','manual','reversal'"
+        },
+        "badges_check_10": {
+          "name": "badges_check_10",
+          "value": "trigger_type IN ('auto','manual'"
+        },
+        "prayer_requests_check_11": {
+          "name": "prayer_requests_check_11",
+          "value": "status IN ('praying','answered'"
+        },
+        "event_attendance_check_12": {
+          "name": "event_attendance_check_12",
+          "value": "status IN ('confirmed','attended','absent'"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

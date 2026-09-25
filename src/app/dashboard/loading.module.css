@@ -1,0 +1,84 @@
+/* Shared loading skeleton styles */
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Home specific */
+.banner {
+  height: 340px;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.body {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.greet {
+  height: 72px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Generic block */
+.block {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+}
+
+/* Generic page skeleton */
+.page {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageHeader {
+  height: 48px;
+  width: 260px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+.card {
+  height: 110px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .banner { height: 200px; }
+  .body { padding: 16px; }
+  .twoCol { grid-template-columns: 1fr; }
+  .page { padding: 16px; }
+}
