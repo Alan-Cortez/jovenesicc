@@ -169,3 +169,57 @@ a {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* =========================================
+   GLOBAL RESPONSIVE OVERRIDES (MOBILE & TABLET)
+   ========================================= */
+@media (max-width: 768px) {
+  /* Fix hardcoded paddings on any element */
+  [style*="padding: 40px"],
+  [style*="padding: '40px"],
+  [style*="padding: 24px"],
+  [style*="padding: '24px"] {
+    padding: 16px !important;
+  }
+
+  /* Fix hardcoded grid columns in inline styles */
+  [style*="gridTemplateColumns"],
+  [style*="grid-template-columns"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  /* Flexbox wrappers that shouldn't squash on mobile */
+  div[style*="justify-content: space-between"] {
+    flex-wrap: wrap !important;
+    gap: 12px;
+  }
+
+  /* Ensure tables can scroll horizontally */
+  div[style*="overflowX: 'auto'"],
+  div[style*="overflow-x: auto"] {
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 600px; /* Force minimum width to trigger horizontal scroll */
+  }
+
+  /* Typography adjustments */
+  h1, h2 {
+    font-size: 1.6rem !important;
+  }
+
+  /* Make panels full width */
+  .glass-panel {
+    width: 100% !important;
+    padding: 16px !important;
+  }
+
+  /* Standardize containers */
+  .container {
+    padding: 0 16px !important;
+  }
+}
