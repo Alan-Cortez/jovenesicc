@@ -29,7 +29,7 @@ export default async function DashboardLayout({
     const result = await db
       .select({ count: count() })
       .from(taskSubmissions)
-      .where(eq(taskSubmissions.status, 'pending'));
+      .where(eq(taskSubmissions.status, 'submitted'));
     pendingCount = result[0]?.count ?? 0;
   }
 

@@ -33,7 +33,7 @@ export default async function AdminRevisionesPage() {
   .from(taskSubmissions)
   .innerJoin(tasks, eq(taskSubmissions.taskId, tasks.id))
   .innerJoin(users, eq(taskSubmissions.userId, users.id))
-  .where(eq(taskSubmissions.status, 'pending'))
+  .where(eq(taskSubmissions.status, 'submitted'))
   .orderBy(desc(taskSubmissions.submittedAt));
 
   return (
