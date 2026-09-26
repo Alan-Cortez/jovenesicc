@@ -5,6 +5,7 @@ import { getNotificationsAction, markNotificationAsReadAction, markAllNotificati
 import { Bell, Heart, MessageSquare, Gift, Award, ShieldAlert, CheckCircle, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import styles from './notification.module.css';
 
 export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +24,6 @@ export default function NotificationBell() {
 
   useEffect(() => {
     fetchNotifs();
-    // Podríamos hacer polling cada X tiempo, o recargar al cambiar de ruta
   }, []);
 
   useEffect(() => {
@@ -58,7 +58,6 @@ export default function NotificationBell() {
     }
   };
 
-  // Helper para renderizar el icono adecuado
   const renderIcon = (type: string) => {
     const iconProps = { size: 16, color: '#ffffff' };
     switch (type) {
@@ -87,80 +86,37 @@ export default function NotificationBell() {
   };
 
   return (
-    <div style={{ position: 'relative' }} ref={dropdownRef}>
+    <div className={styles.wrapper} ref={dropdownRef}>
       <button 
+        className={styles.bellBtn}
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: '50%',
-          width: '40px',
-          height: '40px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          color: 'var(--color-text-main)',
-          position: 'relative'
-        }}
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span style={{
-            position: 'absolute',
-            top: '-2px',
-            right: '-2px',
-            background: '#e0245e',
-            color: 'white',
-            fontSize: '0.65rem',
-            fontWeight: 'bold',
-            borderRadius: '50%',
-            width: '18px',
-            height: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+          <span className={styles.badge}>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div style={{
-          position: 'absolute',
-          top: '50px',
-          left: '0', // Por ahora lo alineamos a la izquierda, ideal para el sidebar
-          width: '320px',
-          background: 'var(--color-secondary)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: '16px',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-          zIndex: 1000,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          maxHeight: '480px'
-        }}>
+        <div className={styles.dropdown}>
           {/* Header */}
-          <div style={{ padding: '16px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-text-main)' }}>Notificaciones</h3>
+          <div className={styles.header}>
+            <h3 className={styles.title}>Notificaciones</h3>
             {unreadCount > 0 && (
-              <button 
-                onClick={handleMarkAll}
-                style={{ background: 'transparent', border: 'none', color: '#1da1f2', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
-              >
+              <button onClick={handleMarkAll} className={styles.markReadBtn}>
                 Marcar leídas
               </button>
             )}
           </div>
 
           {/* List */}
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div className={styles.list}>
             {loading ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--color-text-muted)' }}>Cargando...</div>
+              <div className={styles.empty}>Cargando...</div>
             ) : notifications.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+              <div className={styles.empty}>
                 No tienes notificaciones
               </div>
             ) : (
@@ -169,60 +125,46 @@ export default function NotificationBell() {
                   <div 
                     key={n.id}
                     onClick={() => handleNotificationClick(n)}
-                    style={{
-                      display: 'flex',
-                      gap: '12px',
-                      padding: '16px',
-                      borderBottom: '1px solid rgba(255,255,255,0.05)',
-                      background: n.isRead === 0 ? 'rgba(255,255,255,0.04)' : 'transparent',
-                      cursor: n.link ? 'pointer' : 'default',
-                      transition: 'background 0.2s',
-                      position: 'relative'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = n.isRead === 0 ? 'rgba(255,255,255,0.04)' : 'transparent'}
+                    className={`${styles.item} ${n.isRead === 0 ? styles.itemUnread : ''}`}
+                    style={{ cursor: n.link ? 'pointer' : 'default' }}
                   >
                     {/* Actor / Icono */}
-                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <div className={styles.avatarWrapper}>
                       {n.actor?.avatar ? (
                         <img 
                           src={n.actor.avatar} 
                           alt={n.actor.name} 
-                          style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} 
+                          className={styles.avatar} 
                         />
                       ) : (
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ fontWeight: 'bold' }}>{n.actor?.name ? n.actor.name.substring(0,2).toUpperCase() : 'JC'}</span>
+                        <div className={styles.avatarFallback}>
+                          <span>{n.actor?.name ? n.actor.name.substring(0,2).toUpperCase() : 'JC'}</span>
                         </div>
                       )}
                       
-                      <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', border: '2px solid var(--color-secondary)', borderRadius: '50%' }}>
+                      <div className={styles.iconWrapper}>
                         {renderIcon(n.type)}
                       </div>
                     </div>
 
                     {/* Contenido */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, paddingRight: '12px' }}>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.4 }}>
-                        {n.content}
-                      </p>
-                      <span style={{ fontSize: '0.75rem', color: n.isRead === 0 ? '#1da1f2' : 'var(--color-text-muted)', fontWeight: n.isRead === 0 ? 600 : 400 }}>
+                    <div className={styles.content}>
+                      <p className={styles.text}>{n.content}</p>
+                      <span className={`${styles.time} ${n.isRead === 0 ? styles.timeUnread : styles.timeRead}`}>
                         {formatTime(n.createdAt)}
                       </span>
                     </div>
 
                     {/* Unread indicator */}
-                    {n.isRead === 0 && (
-                      <div style={{ width: '8px', height: '8px', background: '#1da1f2', borderRadius: '50%', position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-                    )}
+                    {n.isRead === 0 && <div className={styles.unreadDot} />}
                   </div>
                 ))}
               </div>
             )}
           </div>
           
-          <div style={{ padding: '12px', textAlign: 'center', borderTop: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Jóvenes CON TODO</span>
+          <div className={styles.footer}>
+            <span className={styles.footerText}>Jóvenes CON TODO</span>
           </div>
         </div>
       )}
