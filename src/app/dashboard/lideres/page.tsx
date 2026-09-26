@@ -18,19 +18,32 @@ export default async function LideresPage() {
     redirect('/login');
   }
 
-  // Traer a todos los usuarios ordenados por nivel y luego XP
-  // Filtrando a los que tienen perfil privado (ej. hideProfile === 1) si existiera.
-  // Como no hay en el schema, mostramos a todos los 'joven' o 'lider'
-  const allUsers = await db
-    .select()
-    .from(users)
-    .orderBy(desc(users.level), desc(users.xp));
+  const allUsers = await db.select().from(users);
 
   const { groups, groupMeetings, groupMeetingAttendance } = await import('@/lib/schema');
   
   const allGroups = await db.select().from(groups);
   const meetings = await db.select().from(groupMeetings);
   const attendances = await db.select().from(groupMeetingAttendance);
+
+  // Calcular puntos individuales
+  const usersRanking = allUsers
+    .filter(u => u.isActive)
+    .map(u => {
+      const userAttendances = attendances.filter(a => a.userId === u.id);
+      const individualPoints = userAttendances.reduce((acc, curr) => acc + curr.totalPoints, 0);
+      return {
+        id: u.id,
+        name: u.name,
+        role: u.role,
+        level: u.level,
+        xp: u.xp, // Mantener por si acaso
+        individualPoints, // Puntos acumulados en reuniones
+        streak: u.streakCurrent,
+        avatar: u.avatar ?? null,
+      };
+    })
+    .sort((a, b) => b.individualPoints - a.individualPoints); // Ordenar por puntos
 
   const groupsRanking = allGroups.map(g => {
     const currentMembers = allUsers.filter(u => u.groupId === g.id);
@@ -55,16 +68,7 @@ export default async function LideresPage() {
   return (
     <LideresClient 
       currentUserId={currentUser.id} 
-      users={allUsers.filter(u => u.isActive).map(u => ({
-        id: u.id,
-        name: u.name,
-        role: u.role,
-        level: u.level,
-        xp: u.xp,
-        streak: u.streakCurrent,
-        totalXp: (u.level - 1) * 500 + u.xp,
-        avatar: u.avatar ?? null,
-      }))} 
+      users={usersRanking} 
       groups={groupsRanking}
     />
   );

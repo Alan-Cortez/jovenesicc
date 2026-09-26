@@ -10,7 +10,7 @@ type LeaderboardUser = {
   level: number;
   xp: number;
   streak: number;
-  totalXp: number;
+  individualPoints: number;
   avatar?: string | null;
 };
 
@@ -154,9 +154,9 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
                 {/* Nombre */}
                 <p className={styles.podiumName}>{u.name}</p>
 
-                {/* XP */}
+                {/* Pts */}
                 <div className={styles.podiumXp} style={{ color: c.num }}>
-                  {u.totalXp.toLocaleString()} XP
+                  {u.individualPoints.toLocaleString()} Pts
                 </div>
               </div>
             );
@@ -208,7 +208,7 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
                   <span className={styles.streakBadge}>{u.streak} dias</span>
                 )}
                 <span className={styles.xpText}>
-                  {u.totalXp.toLocaleString()} XP
+                  {u.individualPoints.toLocaleString()} Pts
                 </span>
               </div>
             </div>
