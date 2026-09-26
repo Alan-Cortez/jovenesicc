@@ -6,6 +6,7 @@ import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { createNotification } from './notifications';
 
 export async function createUserAction(formData: FormData) {
   const cookieStore = await cookies();
@@ -509,10 +510,27 @@ export async function reviewSubmissionAction(formData: FormData) {
         grantedBy: admin.id,
         createdAt: new Date().toISOString()
       });
+
+      // 4. Send Notification
+      await createNotification({
+        userId: submission.userId,
+        actorId: admin.id,
+        type: 'success',
+        content: `Misión aprobada. Has ganado +${submission.xpReward} XP.`,
+        link: '/dashboard/misiones'
+      });
     } else if (actionType === 'reject') {
       await db.update(taskSubmissions)
         .set({ status: 'rejected', reviewedBy: admin.id, reviewedAt: new Date().toISOString() })
         .where(eq(taskSubmissions.id, submissionId));
+
+      await createNotification({
+        userId: submission.userId,
+        actorId: admin.id,
+        type: 'warning',
+        content: `Tu evidencia de misión requiere revisión.`,
+        link: '/dashboard/misiones'
+      });
     }
 
     revalidatePath('/dashboard/admin/revisiones');

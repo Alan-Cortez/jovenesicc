@@ -6,6 +6,7 @@ import { eq, desc, sql, and } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { createNotification } from './notifications';
 
 async function verifyAuth() {
   const cookieStore = await cookies();
@@ -53,6 +54,18 @@ export async function toggleLikeAction(postId: number) {
         postId,
         userId: user.id,
       });
+
+      // Send notification to post owner
+      const post = await db.select({ userId: posts.userId }).from(posts).where(eq(posts.id, postId)).limit(1);
+      if (post.length > 0 && post[0].userId !== user.id) {
+        await createNotification({
+          userId: post[0].userId,
+          actorId: user.id as number,
+          type: 'like',
+          content: `${user.name || 'Alguien'} reaccionó a tu publicación.`,
+          link: '/dashboard'
+        });
+      }
     }
     revalidatePath('/dashboard');
     return { success: true };
@@ -72,6 +85,19 @@ export async function addCommentAction(postId: number, content: string, parentId
       content,
       parentId: parentId || null,
     });
+
+    // Send notification to post owner
+    const post = await db.select({ userId: posts.userId }).from(posts).where(eq(posts.id, postId)).limit(1);
+    if (post.length > 0 && post[0].userId !== user.id) {
+      await createNotification({
+        userId: post[0].userId,
+        actorId: user.id as number,
+        type: 'comment',
+        content: `${user.name || 'Alguien'} comentó en tu publicación.`,
+        link: '/dashboard'
+      });
+    }
+
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
