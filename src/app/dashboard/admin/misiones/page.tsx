@@ -118,6 +118,7 @@ export default async function AdminMisionesPage() {
                 <option value="none">Sin evidencia (Solo botón "Completado")</option>
                 <option value="text">Texto (Deben escribir un resumen)</option>
                 <option value="media">Foto / Imagen (Subir archivo)</option>
+                <option value="file">Descripción + Foto/Video</option>
               </select>
             </div>
 

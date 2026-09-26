@@ -66,15 +66,30 @@ export default async function AdminRevisionesPage() {
                 <div style={{ marginBottom: '24px' }}>
                   <h5 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Evidencia ({review.evidenceType}):</h5>
                   <div style={{ backgroundColor: '#111', padding: '16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    {review.evidenceType === 'media' || review.evidenceType === 'file' ? (
-                      review.evidence?.startsWith('data:image') || review.evidence?.startsWith('http') ? (
-                        <img src={review.evidence} alt="Evidencia" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px' }} />
-                      ) : (
-                        <p style={{ color: '#ff6b6b' }}>Formato de archivo no soportado.</p>
-                      )
-                    ) : (
-                      <p style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{review.evidence || 'No se adjuntó texto.'}</p>
-                    )}
+                    {(() => {
+                      try {
+                        const parsed = JSON.parse(review.evidence || '{}');
+                        if (!parsed.text && !parsed.file) throw new Error();
+                        return (
+                          <>
+                            {parsed.text && <p style={{ color: '#fff', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>{parsed.text}</p>}
+                            {parsed.file && (
+                              <img src={parsed.file} alt="Evidencia" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px' }} />
+                            )}
+                          </>
+                        );
+                      } catch {
+                        return review.evidenceType === 'media' || review.evidenceType === 'file' ? (
+                          review.evidence?.startsWith('data:image') || review.evidence?.startsWith('http') ? (
+                            <img src={review.evidence} alt="Evidencia" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px' }} />
+                          ) : (
+                            <p style={{ color: '#ff6b6b' }}>Formato de archivo no soportado.</p>
+                          )
+                        ) : (
+                          <p style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{review.evidence || 'No se adjuntó texto.'}</p>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
 

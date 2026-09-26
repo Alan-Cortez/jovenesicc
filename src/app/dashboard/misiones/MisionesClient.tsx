@@ -149,12 +149,12 @@ function TaskCard({
                 </div>
               )}
 
-              {task.evidenceType === 'text' && (
+              {(task.evidenceType === 'text' || task.evidenceType === 'file') && (
                 <textarea
                   name="evidenceText"
                   className="input-field"
                   rows={3}
-                  placeholder="Describe como completaste esta mision..."
+                  placeholder={task.evidenceType === 'file' ? "Descripción de la misión..." : "Describe cómo completaste esta misión..."}
                   required
                   style={{ resize: 'vertical' }}
                 />
@@ -165,7 +165,7 @@ function TaskCard({
                   type="file"
                   name="evidenceFile"
                   className="input-field"
-                  accept={task.evidenceType === 'media' ? 'image/*,video/*' : '*'}
+                  accept="image/*,video/*"
                   required
                 />
               )}
