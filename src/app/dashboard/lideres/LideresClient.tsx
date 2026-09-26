@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import styles from './lideres.module.css';
 
 type LeaderboardUser = {
@@ -21,7 +22,7 @@ type GroupRank = {
 };
 
 const TROPHY: Record<number, string> = {
-  1: '🏆',
+  1: '🥇',
   2: '🥈',
   3: '🥉',
 };
@@ -70,6 +71,20 @@ function Initials({ name, size = 48, color, avatar }: { name: string; size?: num
   );
 }
 
+// Variantes de animación
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 300, damping: 24 } }
+};
+
 export default function LideresClient({
   currentUserId,
   users,
@@ -84,9 +99,13 @@ export default function LideresClient({
 
   return (
     <div className={styles.root}>
-
       {/* Header */}
-      <div className={styles.pageHeader}>
+      <motion.div 
+        className={styles.pageHeader}
+        initial={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.5 }}
+      >
         <div>
           <h1 className={styles.pageTitle}>Tabla de Lideres</h1>
           <p className={styles.pageSub}>Mira como vas en comparacion al grupo</p>
@@ -102,26 +121,35 @@ export default function LideresClient({
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      {activeTab === 'jovenes' ? (
-        <JovenesTab users={rankedUsers} currentUserId={currentUserId} />
-      ) : (
-        <GruposTab groups={groups} />
-      )}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          {activeTab === 'jovenes' ? (
+            <JovenesTab users={rankedUsers} currentUserId={currentUserId} />
+          ) : (
+            <GruposTab groups={groups} />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
 
 function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; currentUserId: number }) {
   const top3 = users.slice(0, 3);
-  const rest = users.slice(3);
   // Reordenar: 2, 1, 3 para el podio visual
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
   const podiumPositions = [2, 1, 3];
 
   return (
-    <>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
       {/* Podium */}
       {top3.length > 0 && (
         <div className={styles.podiumSection}>
@@ -130,8 +158,10 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
             const c = PODIUM_COLORS[rank];
             const heights = { 1: 210, 2: 170, 3: 150 };
             return (
-              <div
+              <motion.div
                 key={u.id}
+                layout
+                variants={itemVariants}
                 className={styles.podiumCard}
                 style={{
                   height: heights[rank as keyof typeof heights],
@@ -140,25 +170,14 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
                   order: rank === 1 ? 2 : rank === 2 ? 1 : 3,
                 }}
               >
-                {/* Badge de posicion */}
-                <div className={styles.rankBadge} style={{ background: c.badge }}>
-                  {rank}
-                </div>
-
-                {/* Trofeo */}
+                <div className={styles.rankBadge} style={{ background: c.badge }}>{rank}</div>
                 <span className={styles.trophyIcon}>{TROPHY[rank]}</span>
-
-                {/* Avatar */}
                 <Initials name={u.name} size={rank === 1 ? 56 : 44} avatar={u.avatar} />
-
-                {/* Nombre */}
                 <p className={styles.podiumName}>{u.name}</p>
-
-                {/* Pts */}
                 <div className={styles.podiumXp} style={{ color: c.num }}>
                   {u.individualPoints.toLocaleString()} Pts
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -171,28 +190,19 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
           const isMe = u.id === currentUserId;
           const medal = PODIUM_COLORS[rank];
           return (
-            <div
+            <motion.div
+              layout
+              variants={itemVariants}
               key={u.id}
               className={`${styles.row} ${isMe ? styles.rowMe : ''}`}
             >
-              {/* Posicion */}
               <div className={styles.colRank}>
-                <span
-                  className={styles.rankNum}
-                  style={medal ? { color: medal.num } : undefined}
-                >
+                <span className={styles.rankNum} style={medal ? { color: medal.num } : undefined}>
                   {rank <= 3 ? TROPHY[rank] : rank}
                 </span>
               </div>
-
-              {/* Avatar + nombre */}
               <div className={styles.colName}>
-                <Initials
-                  name={u.name}
-                  size={38}
-                  color={isMe ? 'rgba(255,255,255,0.2)' : undefined}
-                  avatar={u.avatar}
-                />
+                <Initials name={u.name} size={38} color={isMe ? 'rgba(255,255,255,0.2)' : undefined} avatar={u.avatar} />
                 <div>
                   <span className={styles.nameText}>
                     {u.name}
@@ -201,26 +211,20 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
                   <span className={styles.levelBadge}>Nivel {u.level}</span>
                 </div>
               </div>
-
-              {/* Stats */}
               <div className={styles.colStats}>
-                {u.streak > 0 && (
-                  <span className={styles.streakBadge}>{u.streak} dias</span>
-                )}
-                <span className={styles.xpText}>
-                  {u.individualPoints.toLocaleString()} Pts
-                </span>
+                {u.streak > 0 && <span className={styles.streakBadge}>{u.streak} dias</span>}
+                <span className={styles.xpText}>{u.individualPoints.toLocaleString()} Pts</span>
               </div>
-            </div>
+            </motion.div>
           );
         })}
         {users.length === 0 && (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '32px 0', fontSize: '0.9rem' }}>
+          <motion.p variants={itemVariants} style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '32px 0', fontSize: '0.9rem' }}>
             No hay datos disponibles todavia.
-          </p>
+          </motion.p>
         )}
       </div>
-    </>
+    </motion.div>
   );
 }
 
@@ -231,7 +235,7 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
   const GROUP_COLORS = ['#4ae290', '#4a90e2', '#e24a4a', '#e2c44a', '#a44ae2'];
 
   return (
-    <>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
       {top3.length > 0 && (
         <div className={styles.podiumSection}>
           {podiumOrder.map((g, idx) => {
@@ -240,7 +244,9 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
             const heights = { 1: 210, 2: 170, 3: 150 };
             const gc = GROUP_COLORS[(g.id - 1) % GROUP_COLORS.length];
             return (
-              <div
+              <motion.div
+                layout
+                variants={itemVariants}
                 key={g.id}
                 className={styles.podiumCard}
                 style={{
@@ -257,7 +263,7 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
                 <div className={styles.podiumXp} style={{ color: c.num }}>
                   {g.totalScore.toLocaleString()} pts
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -269,7 +275,7 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
           const medal = PODIUM_COLORS[rank];
           const gc = GROUP_COLORS[(g.id - 1) % GROUP_COLORS.length];
           return (
-            <div key={g.id} className={styles.row}>
+            <motion.div layout variants={itemVariants} key={g.id} className={styles.row}>
               <div className={styles.colRank}>
                 <span className={styles.rankNum} style={medal ? { color: medal.num } : undefined}>
                   {rank <= 3 ? TROPHY[rank] : rank}
@@ -282,15 +288,15 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
               <div className={styles.colStats}>
                 <span className={styles.xpText}>{g.totalScore.toLocaleString()} pts</span>
               </div>
-            </div>
+            </motion.div>
           );
         })}
         {groups.length === 0 && (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '32px 0', fontSize: '0.9rem' }}>
+          <motion.p variants={itemVariants} style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '32px 0', fontSize: '0.9rem' }}>
             No hay grupos registrados.
-          </p>
+          </motion.p>
         )}
       </div>
-    </>
+    </motion.div>
   );
 }
