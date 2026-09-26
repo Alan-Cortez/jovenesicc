@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { addSongSuggestionAction, deleteSongSuggestionAction } from '@/app/actions/songs';
 
 type Song = {
@@ -16,6 +16,8 @@ export default function SongSuggestions({ songs, currentUserId, isAdmin }: { son
   const [url, setUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filterUser, setFilterUser] = useState('all');
+  const [sortOrder, setSortOrder] = useState('newest');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +41,28 @@ export default function SongSuggestions({ songs, currentUserId, isAdmin }: { son
     }
   };
 
+  
+  const uniqueUsers = useMemo(() => {
+    const users = new Map<number, string>();
+    songs.forEach(s => users.set(s.userId, s.userName));
+    return Array.from(users.entries()).map(([id, name]) => ({ id, name }));
+  }, [songs]);
+
+  const filteredSongs = useMemo(() => {
+    let result = [...songs];
+    if (filterUser !== 'all') {
+      result = result.filter(s => s.userId.toString() === filterUser);
+    }
+    result.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+    return result;
+  }, [songs, filterUser, sortOrder]);
+
   return (
+
     <div style={{ marginBottom: '32px' }}>
       <h2 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '12px' }}>
         Playlist Colaborativa
@@ -66,14 +89,45 @@ export default function SongSuggestions({ songs, currentUserId, isAdmin }: { son
 
       {error && <p style={{ color: '#ff6b6b', fontSize: '0.8rem', marginTop: '-8px', marginBottom: '12px' }}>{error}</p>}
 
+      
+      {/* Filtros */}
+      {songs.length > 0 && (
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <select 
+            value={filterUser} 
+            onChange={e => setFilterUser(e.target.value)}
+            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', color: 'var(--color-text-main)', fontSize: '0.85rem', outline: 'none', cursor: 'pointer' }}
+          >
+            <option value="all">Todas las personas</option>
+            {uniqueUsers.map(u => (
+              <option key={u.id} value={u.id}>{u.name}</option>
+            ))}
+          </select>
+
+          <select 
+            value={sortOrder} 
+            onChange={e => setSortOrder(e.target.value)}
+            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', color: 'var(--color-text-main)', fontSize: '0.85rem', outline: 'none', cursor: 'pointer' }}
+          >
+            <option value="newest">Más recientes</option>
+            <option value="oldest">Más antiguas</option>
+          </select>
+        </div>
+      )}
+
       {/* Lista de Canciones */}
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '500px', overflowY: 'auto' }}>
         {songs.length === 0 ? (
           <div style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '16px', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
             Aún no hay canciones recomendadas. ¡Sé el primero!
           </div>
+        ) : filteredSongs.length === 0 ? (
+          <div style={{ padding: '16px', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+            No se encontraron canciones con estos filtros.
+          </div>
         ) : (
-          songs.map(song => (
+          filteredSongs.map(song => (
             <div key={song.id} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: 0, display: 'flex', justifyContent: 'space-between' }}>
                 <span>Sugerencia de <b>{song.userName}</b></span>
