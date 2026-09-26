@@ -251,10 +251,12 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
+  margin-bottom: 12px;
 }
 
 .commentItem.isReply {
   padding-left: 44px;
+  margin-top: -4px;
 }
 
 .commentAvatar {
@@ -262,6 +264,7 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .commentAvatarFallback {
@@ -279,25 +282,36 @@
 
 .commentBodyWrapper {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .commentContent {
   font-size: 0.9rem;
   line-height: 1.4;
-  margin-bottom: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  display: inline-block;
+  max-width: 100%;
+  border: 1px solid rgba(255,255,255,0.02);
 }
 
 .commentAuthor {
-  font-weight: bold;
+  font-weight: 700;
   margin-right: 6px;
+  color: var(--color-text-main);
 }
 
 .commentMeta {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   font-size: 0.75rem;
   color: var(--color-text-muted);
   font-weight: 500;
+  padding-left: 14px;
 }
 
 .replyBtn {
@@ -306,13 +320,17 @@
   color: var(--color-text-muted);
   cursor: pointer;
   padding: 0;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.replyBtn:hover {
+  color: var(--color-text-main);
 }
 
 .commentLikeCol {
   display: flex;
   align-items: center;
-  padding-top: 4px;
+  padding-top: 12px;
 }
 
 .commentLikeBtn {
@@ -321,25 +339,35 @@
   color: var(--color-text-muted);
   cursor: pointer;
   padding: 4px;
+  transition: transform 0.1s;
+}
+.commentLikeBtn:hover {
+  transform: scale(1.1);
 }
 
 /* Add Comment Row */
 .addCommentRow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--glass-border);
 }
 
 .commentInput {
   flex: 1;
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   color: var(--color-text-main);
   outline: none;
   font-size: 0.9rem;
-  border-bottom: 1px solid var(--glass-border);
-  padding: 8px 0;
+  padding: 10px 16px;
+  transition: background 0.2s;
+}
+.commentInput:focus {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .commentInput::placeholder {
