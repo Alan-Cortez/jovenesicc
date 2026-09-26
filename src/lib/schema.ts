@@ -458,11 +458,11 @@ export const announcements = sqliteTable("announcements", {
 export const notifications = sqliteTable("notifications", {
 	id: integer().primaryKey({ autoIncrement: true }),
 	userId: integer("user_id").notNull().references(() => users.id),
-	type: text().notNull(),
-	title: text().notNull(),
-	body: text(),
-	isRead: integer("is_read").default(0).notNull(),
-	relatedId: integer("related_id"),
+	actorId: integer("actor_id").references(() => users.id), // Who performed the action
+	type: text().notNull(), // 'like', 'comment', 'mission', 'level', 'system', etc.
+	content: text().notNull(), // text of the notification
+	link: text(), // where to navigate when clicked
+	isRead: integer("is_read").default(0).notNull(), // 0 for false, 1 for true
 	createdAt: text("created_at").default("sql`(datetime('now'))`").notNull(),
 },
 (table) => [

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { logoutAction } from '@/app/actions/auth';
 import styles from './sidebar.module.css';
+import NotificationBell from './NotificationBell';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Inicio', exact: true },
@@ -53,7 +54,7 @@ export default function SidebarClient({
         onClick={() => setIsOpen(true)}
         aria-label="Abrir menú"
       >
-        ☰
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
       </button>
 
       {/* Overlay oscuro para cerrar menú en móvil */}
@@ -65,10 +66,13 @@ export default function SidebarClient({
       )}
 
       <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
-        {/* Logo */}
+        {/* Logo y Notificaciones */}
         <div className={styles.brand}>
           <img src="/logo.png" alt="Jóvenes CON TODO" style={{ width: '80px', height: '80px', marginBottom: '12px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.1)' }} />
-          <span className={styles.brandGreeting}>Hola, {userName}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+            <span className={styles.brandGreeting}>Hola, {userName.split(' ')[0]}</span>
+            <NotificationBell />
+          </div>
         </div>
 
         {/* Nav principal */}
