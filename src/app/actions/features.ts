@@ -82,14 +82,21 @@ export async function submitMissionEvidenceAction(formData: FormData) {
     return { error: 'Ya enviaste evidencia para esta mision.' };
   }
 
-  let evidence = evidenceText?.trim() || null;
+  let evidenceTextStr = evidenceText?.trim() || '';
+  
+  let fileBase64Array: string[] = [];
+  for (const f of evidenceFiles) {
+    if (f.size > 0) {
+      if (f.size > 10 * 1024 * 1024) return { error: 'Cada archivo no puede superar 10MB.' };
+      const bytes = await f.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      fileBase64Array.push(`data:${f.type};base64,${buffer.toString('base64')}`);
+    }
+  }
 
-  // Si hay archivo, convertir a base64
-  if (evidenceFile && evidenceFile.size > 0) {
-    if (evidenceFile.size > 10 * 1024 * 1024) return { error: 'El archivo no puede superar 10MB.' };
-    const bytes = await evidenceFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    evidence = `data:${evidenceFile.type};base64,${buffer.toString('base64')}`;
+  let evidence = null;
+  if (evidenceTextStr || fileBase64Array.length > 0) {
+    evidence = JSON.stringify({ text: evidenceTextStr, files: fileBase64Array });
   }
 
   await db.insert(taskSubmissions).values({

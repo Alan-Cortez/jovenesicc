@@ -73,7 +73,7 @@ export default async function AdminRevisionesPage() {
                         return (
                           <>
                             {parsed.text && <p style={{ color: '#fff', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>{parsed.text}</p>}
-                            {parsed.files && Array.isArray(parsed.files) && parsed.files.map((fileData, idx) => (
+                            {parsed.files && Array.isArray(parsed.files) && parsed.files.map((fileData: string, idx: number) => (
                               fileData.startsWith('data:video') ? (
                                 <video key={idx} src={fileData} controls style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', marginBottom: '8px' }} />
                               ) : (
