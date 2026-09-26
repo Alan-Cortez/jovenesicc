@@ -44,6 +44,7 @@ export default async function AdminMisionesPage() {
                   <th style={{ padding: '12px' }}>Asignación</th>
                   <th style={{ padding: '12px' }}>Evidencia</th>
                   <th style={{ padding: '12px' }}>Estado</th>
+                  <th style={{ padding: '12px' }}>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,8 +74,18 @@ export default async function AdminMisionesPage() {
                         color: m.isActive ? '#4ae290' : '#ff6b6b'
                       }}>
                         {m.isActive ? 'ACTIVA' : 'INACTIVA'}
-                      </span>
-                    </td>
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <form action={async (formData) => {
+                          'use server';
+                          const { deleteMissionAction } = await import('@/app/actions/admin');
+                          await deleteMissionAction(formData);
+                        }}>
+                          <input type="hidden" name="taskId" value={m.id} />
+                          <button type="submit" style={{ background: 'transparent', border: '1px solid #ff6b6b', color: '#ff6b6b', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Eliminar</button>
+                        </form>
+                      </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,25 +139,17 @@ export default async function AdminMisionesPage() {
               <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Asignar a *</label>
               <select name="assignedTo" className="input-field" style={{ backgroundColor: 'var(--glass-bg)', cursor: 'pointer' }} required>
                 <option value="all">Todos los Jóvenes</option>
-                <option value="group">Un Grupo / Célula</option>
+                
                 <option value="individual">Un Joven Específico</option>
               </select>
             </div>
 
             <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Grupo</label>
-                <select name="groupId" className="input-field" style={{ backgroundColor: 'var(--glass-bg)', cursor: 'pointer' }}>
-                  <option value="">-- Seleccionar --</option>
-                  {allGroups.map(g => (
-                    <option key={g.id} value={g.id}>{g.name}</option>
-                  ))}
-                </select>
-              </div>
+              
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Joven</label>
                 <select name="userId" className="input-field" style={{ backgroundColor: 'var(--glass-bg)', cursor: 'pointer' }}>
-                  <option value="">-- Seleccionar --</option>
+                  <option value="" disabled selected>-- Seleccionar Joven --</option>
                   {allUsers.map(u => (
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}

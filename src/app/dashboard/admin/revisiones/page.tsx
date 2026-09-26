@@ -69,13 +69,17 @@ export default async function AdminRevisionesPage() {
                     {(() => {
                       try {
                         const parsed = JSON.parse(review.evidence || '{}');
-                        if (!parsed.text && !parsed.file) throw new Error();
+                        if (!parsed.text && (!parsed.files || parsed.files.length === 0)) throw new Error();
                         return (
                           <>
                             {parsed.text && <p style={{ color: '#fff', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>{parsed.text}</p>}
-                            {parsed.file && (
-                              <img src={parsed.file} alt="Evidencia" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px' }} />
-                            )}
+                            {parsed.files && Array.isArray(parsed.files) && parsed.files.map((fileData, idx) => (
+                              fileData.startsWith('data:video') ? (
+                                <video key={idx} src={fileData} controls style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', marginBottom: '8px' }} />
+                              ) : (
+                                <img key={idx} src={fileData} alt="Evidencia" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', marginBottom: '8px' }} />
+                              )
+                            ))}
                           </>
                         );
                       } catch {

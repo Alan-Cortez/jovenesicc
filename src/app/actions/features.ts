@@ -65,7 +65,7 @@ export async function submitMissionEvidenceAction(formData: FormData) {
 
   const taskId = parseInt(formData.get('taskId') as string);
   const evidenceText = formData.get('evidenceText') as string;
-  const evidenceFile = formData.get('evidenceFile') as File | null;
+  const evidenceFiles = formData.getAll('evidenceFile') as File[];
 
   if (isNaN(taskId)) return { error: 'Mision invalida.' };
 

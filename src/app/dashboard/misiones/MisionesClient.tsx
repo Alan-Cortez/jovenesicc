@@ -164,6 +164,7 @@ function TaskCard({
                 <input
                   type="file"
                   name="evidenceFile"
+                  multiple
                   className="input-field"
                   accept="image/*,video/*"
                   required

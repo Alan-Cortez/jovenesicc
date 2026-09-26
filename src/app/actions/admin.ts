@@ -827,3 +827,28 @@ export async function updatePlanDayAction(formData: FormData) {
     return { error: 'Error al actualizar el día' };
   }
 }
+
+export async function deleteMissionAction(formData: FormData) {
+  'use server';
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('session')?.value;
+  if (!sessionToken) throw new Error('No autenticado');
+
+  const { decrypt } = await import('@/lib/auth');
+  const admin = await decrypt(sessionToken);
+  if (admin.role !== 'admin' && admin.role !== 'lider') throw new Error('No autorizado');
+
+  const taskId = parseInt(formData.get('taskId') as string);
+  if (isNaN(taskId)) throw new Error('ID invalido');
+
+  const { db } = await import('@/lib/db');
+  const { tasks, taskSubmissions } = await import('@/lib/schema');
+  const { eq } = await import('drizzle-orm');
+
+  await db.delete(taskSubmissions).where(eq(taskSubmissions.taskId, taskId));
+  await db.delete(tasks).where(eq(tasks.id, taskId));
+
+  const { revalidatePath } = await import('next/cache');
+  revalidatePath('/dashboard/admin/misiones');
+}
