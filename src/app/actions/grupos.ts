@@ -197,6 +197,7 @@ export async function getGroupsWithMembersAction() {
 
 export async function evaluateGroupAction(data: {
   groupId: number;
+  meetingId?: number; // Added to support updating
   date: string;
   newGuests: { invitedBy: number, name: string }[];
   attendedGuestIds: number[];
@@ -267,19 +268,36 @@ export async function evaluateGroupAction(data: {
       };
     });
 
-    const meetingResult = await db.insert(groupMeetings).values({
-      groupId: data.groupId,
-      date: data.date,
-      perfectAttendanceBonus,
-      perfectPunctualityBonus,
-      guestsPoints: 0,
-      totalPoints: groupTotal,
-    }).returning({ insertedId: groupMeetings.id });
+    let meetingId = data.meetingId;
 
-    const meetingId = meetingResult[0].insertedId;
+    if (meetingId) {
+      // Actualizar la reunión existente
+      await db.update(groupMeetings)
+        .set({
+          date: data.date,
+          perfectAttendanceBonus,
+          perfectPunctualityBonus,
+          totalPoints: groupTotal,
+        })
+        .where(eq(groupMeetings.id, meetingId));
+        
+      // Eliminar las asistencias anteriores para reemplazarlas
+      await db.delete(groupMeetingAttendance).where(eq(groupMeetingAttendance.meetingId, meetingId));
+    } else {
+      // Crear nueva reunión
+      const meetingResult = await db.insert(groupMeetings).values({
+        groupId: data.groupId,
+        date: data.date,
+        perfectAttendanceBonus,
+        perfectPunctualityBonus,
+        guestsPoints: 0,
+        totalPoints: groupTotal,
+      }).returning({ insertedId: groupMeetings.id });
+      meetingId = meetingResult[0].insertedId;
+    }
 
-    // Guardar asistencias
-    if (attendanceRecords.length > 0) {
+    // Guardar (o re-guardar) asistencias
+    if (attendanceRecords.length > 0 && meetingId) {
       const recordsToInsert = attendanceRecords.map(r => ({
         ...r,
         meetingId,
@@ -294,4 +312,24 @@ export async function evaluateGroupAction(data: {
     console.error('Error evaluating group:', error);
     return { error: 'Error al evaluar la reunión del grupo.' };
   }
+}
+
+
+export async function deleteMeetingAction(formData: FormData) {
+  'use server';
+  const admin = await verifyAdmin();
+  if (!admin) throw new Error('No autorizado');
+
+  const meetingId = parseInt(formData.get('meetingId') as string);
+  if (isNaN(meetingId)) throw new Error('ID invalido');
+
+  const { groupMeetings, groupMeetingAttendance } = await import('@/lib/schema');
+  const { eq } = await import('drizzle-orm');
+
+  await db.delete(groupMeetingAttendance).where(eq(groupMeetingAttendance.meetingId, meetingId));
+  await db.delete(groupMeetings).where(eq(groupMeetings.id, meetingId));
+
+  const { revalidatePath } = await import('next/cache');
+  revalidatePath('/dashboard/admin/grupos');
+  revalidatePath('/dashboard/lideres');
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { evaluateGroupAction } from '@/app/actions/grupos';
+import { evaluateGroupAction, deleteMeetingAction } from '@/app/actions/grupos';
 import { useRouter } from 'next/navigation';
 
 type Member = { id: number; name: string; avatar: string | null };
@@ -16,18 +16,33 @@ type MemberEvaluation = {
 };
 
 type ExistingGuest = { id: number; name: string; invitedBy: number | null; visitsCount: number };
+type PastMeeting = { id: number; date: string; totalPoints: number };
+type PastAttendance = { meetingId: number; userId: number; tematica: number; puntualidad: number; bibliaCuaderno: number };
 
-export default function EvaluarClient({ group, members, existingGuests = [] }: { group: Group, members: Member[], existingGuests?: ExistingGuest[] }) {
+export default function EvaluarClient({ 
+  group, 
+  members, 
+  existingGuests = [],
+  pastMeetings = [],
+  pastAttendances = []
+}: { 
+  group: Group, 
+  members: Member[], 
+  existingGuests?: ExistingGuest[],
+  pastMeetings?: PastMeeting[],
+  pastAttendances?: PastAttendance[]
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [editingMeetingId, setEditingMeetingId] = useState<number | null>(null);
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   
   // Guest States
-  const [guestAttendance, setGuestAttendance] = useState<Record<number, boolean>>({}); // existingGuest.id -> attended
-  const [newGuests, setNewGuests] = useState<Record<number, string[]>>({}); // userId -> array of guest names
+  const [guestAttendance, setGuestAttendance] = useState<Record<number, boolean>>({});
+  const [newGuests, setNewGuests] = useState<Record<number, string[]>>({});
 
   const [evaluations, setEvaluations] = useState<Record<number, MemberEvaluation>>(() => {
     const initial: Record<number, MemberEvaluation> = {};
@@ -36,6 +51,52 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
     });
     return initial;
   });
+
+  const loadMeeting = (mId: number) => {
+    setEditingMeetingId(mId);
+    const meeting = pastMeetings.find(m => m.id === mId);
+    if (meeting) setDate(meeting.date);
+
+    const att = pastAttendances.filter(a => a.meetingId === mId);
+    const initial: Record<number, MemberEvaluation> = {};
+    members.forEach(m => {
+      const found = att.find(a => a.userId === m.id);
+      initial[m.id] = {
+        userId: m.id,
+        tematica: found ? found.tematica : 0,
+        puntualidad: found ? found.puntualidad : 0,
+        bibliaCuaderno: found ? found.bibliaCuaderno : 0,
+      };
+    });
+    setEvaluations(initial);
+    setGuestAttendance({});
+    setNewGuests({});
+    setSuccess('Reunión cargada para editar.');
+    setError(null);
+  };
+
+  const resetToNew = () => {
+    setEditingMeetingId(null);
+    setDate(new Date().toISOString().split('T')[0]);
+    const initial: Record<number, MemberEvaluation> = {};
+    members.forEach(m => {
+      initial[m.id] = { userId: m.id, tematica: 0, puntualidad: 0, bibliaCuaderno: 0 };
+    });
+    setEvaluations(initial);
+    setGuestAttendance({});
+    setNewGuests({});
+    setSuccess(null);
+    setError(null);
+  };
+
+  const handleDelete = async (mId: number) => {
+    if (confirm('¿Seguro que deseas eliminar esta evaluación? Esto restará los puntos otorgados.')) {
+      const formData = new FormData();
+      formData.append('meetingId', mId.toString());
+      await deleteMeetingAction(formData);
+      if (editingMeetingId === mId) resetToNew();
+    }
+  };
 
   const updateEval = (userId: number, field: keyof MemberEvaluation, value: number) => {
     setEvaluations(prev => ({
@@ -69,7 +130,6 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
   const calculateTotal = () => {
     let total = 0;
     
-    // Add points for existing guests that attended
     Object.entries(guestAttendance).forEach(([gId, attended]) => {
       if (attended) {
         const g = existingGuests.find(x => x.id === parseInt(gId, 10));
@@ -79,7 +139,6 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
       }
     });
 
-    // Add points for new guests
     Object.values(newGuests).forEach(names => {
       total += names.length * 3;
     });
@@ -104,66 +163,93 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
     setError(null);
     setSuccess(null);
 
-    const flatNewGuests: { invitedBy: number, name: string }[] = [];
-    Object.entries(newGuests).forEach(([uId, names]) => {
-      names.forEach(name => {
-        flatNewGuests.push({ invitedBy: parseInt(uId, 10), name });
-      });
-    });
-
     const attendedGuestIds = Object.entries(guestAttendance)
       .filter(([_, attended]) => attended)
       .map(([id]) => parseInt(id, 10));
 
-    const result = await evaluateGroupAction({
-      groupId: group.id,
-      date,
-      newGuests: flatNewGuests,
-      attendedGuestIds,
-      evaluations: Object.values(evaluations)
+    const newGuestsArray: { invitedBy: number, name: string }[] = [];
+    Object.entries(newGuests).forEach(([userId, names]) => {
+      names.forEach(name => {
+        newGuestsArray.push({ invitedBy: parseInt(userId, 10), name });
+      });
     });
 
-    setLoading(false);
+    const result = await evaluateGroupAction({
+      groupId: group.id,
+      meetingId: editingMeetingId || undefined,
+      date,
+      newGuests: newGuestsArray,
+      attendedGuestIds,
+      evaluations: Object.values(evaluations),
+    });
+
     if (result.error) {
       setError(result.error);
     } else {
-      setSuccess(`Evaluación guardada exitosamente. Total de puntos: ${result.totalPoints}`);
+      setSuccess(`Evaluación guardada exitosamente. (${result.totalPoints} pts)`);
+      if (!editingMeetingId) {
+        resetToNew();
+      }
       setTimeout(() => {
         router.push('/dashboard/admin/grupos');
-      }, 2000);
+      }, 1500);
     }
+    setLoading(false);
   };
 
   return (
-    <div style={{ padding: '40px 24px', maxWidth: '900px', margin: '0 auto' }}>
+    <div style={{ padding: '40px 24px', maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ marginBottom: '24px' }}>
         <Link href="/dashboard/admin/grupos" style={{ color: '#a0aab2', textDecoration: 'none', fontSize: '0.9rem' }}>
           ← Volver a Grupos
         </Link>
       </div>
 
-      <div className="glass-panel" style={{ backgroundColor: '#111', border: '1px solid var(--glass-border)' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '8px', color: 'var(--color-primary)' }}>Evaluar Reunión</h2>
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '24px' }}>Grupo: {group.name}</h3>
-
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '32px' }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: '#a0aab2', marginBottom: '8px' }}>Fecha de Reunión</label>
-            <input 
-              type="date" 
-              value={date}
-              onChange={e => setDate(e.target.value)}
-              className="input-field" 
-              style={{ colorScheme: 'dark' }}
-            />
-          </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+        <div>
+          <h2 style={{ fontSize: '2rem', margin: 0 }}>Evaluar Reunión</h2>
+          <p style={{ color: 'var(--color-primary)', fontSize: '1.1rem', margin: '8px 0 0 0', fontWeight: 'bold' }}>Grupo: {group.name}</p>
         </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.85rem', color: '#a0aab2' }}>Fecha de la reunión</label>
+          <input 
+            type="date" 
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="input-field"
+            style={{ width: 'auto' }}
+          />
+        </div>
+      </div>
 
-        <div style={{ marginTop: '32px' }}>
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px' }}>Evaluación por integrante</h3>
-          
+      <div className="glass-panel" style={{ backgroundColor: 'var(--glass-bg)', padding: '24px', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '1.1rem', marginBottom: '16px', color: 'var(--color-text-main)' }}>Historial de Evaluaciones</h3>
+        {pastMeetings.length === 0 ? (
+          <p style={{ fontSize: '0.85rem', color: '#666' }}>No hay reuniones evaluadas todavía.</p>
+        ) : (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {pastMeetings.map(m => (
+              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: editingMeetingId === m.id ? 'rgba(74, 226, 144, 0.2)' : 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '8px', border: editingMeetingId === m.id ? '1px solid #4ae290' : '1px solid transparent' }}>
+                <button onClick={() => loadMeeting(m.id)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '0.85rem' }}>
+                  {m.date} ({m.totalPoints} pts)
+                </button>
+                <button onClick={() => handleDelete(m.id)} style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', fontWeight: 'bold', marginLeft: '8px' }} title="Eliminar evaluación">×</button>
+              </div>
+            ))}
+            {editingMeetingId && (
+              <button onClick={resetToNew} style={{ background: '#333', border: 'none', color: '#fff', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                + Nueva Evaluación
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="glass-panel" style={{ backgroundColor: 'var(--glass-bg)' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px' }}>{editingMeetingId ? 'Editando Evaluación' : 'Asistencia y Puntos'}</h3>
           {members.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)' }}>Este grupo no tiene integrantes para evaluar.</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Este grupo no tiene integrantes aún.</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {members.map(member => {
@@ -171,22 +257,23 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
                 const memberNewGuests = newGuests[member.id] || [];
 
                 return (
-                  <div key={member.id} style={{ 
-                    background: 'rgba(255,255,255,0.03)', 
-                    border: '1px solid rgba(255,255,255,0.1)', 
-                    padding: '16px', 
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px'
-                  }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ width: '150px' }}>
-                        <p style={{ fontWeight: 'bold', margin: 0 }}>{member.name}</p>
+                  <div key={member.id} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#333', overflow: 'hidden', flexShrink: 0 }}>
+                        {member.avatar ? (
+                          <img src={member.avatar} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: '#666', fontWeight: 'bold' }}>
+                            {member.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
                       </div>
-                      
+                      <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{member.name}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: '150px' }}>
-                        <label style={{ display: 'block', fontSize: '0.75rem', color: '#a0aab2', marginBottom: '6px' }}>Temática</label>
+                        <label style={{ display: 'block', fontSize: '0.75rem', color: '#a0aab2', marginBottom: '6px' }}>Temática / Prenda</label>
                         <select 
                           className="input-field" 
                           value={evaluations[member.id].tematica}
@@ -227,7 +314,6 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
                       </div>
                     </div>
 
-                    {/* Guests Section for this member */}
                     <div style={{ borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '16px', marginTop: '4px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                         <h4 style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-text-main)' }}>Invitados de {member.name}</h4>
@@ -297,7 +383,7 @@ export default function EvaluarClient({ group, members, existingGuests = [] }: {
             disabled={loading || members.length === 0}
             style={{ minWidth: '200px' }}
           >
-            {loading ? 'GUARDANDO...' : 'GUARDAR EVALUACIÓN'}
+            {loading ? 'GUARDANDO...' : (editingMeetingId ? 'ACTUALIZAR EVALUACIÓN' : 'GUARDAR EVALUACIÓN')}
           </button>
         </div>
 

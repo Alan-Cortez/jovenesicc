@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { groups, users } from '@/lib/schema';
+import { groups, users, groupMeetings, groupMeetingAttendance } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import EvaluarClient from './EvaluarClient';
@@ -45,5 +45,10 @@ export default async function EvaluarGrupoPage({ params }: { params: Promise<{ i
   const { groupGuests } = await import('@/lib/schema');
   const existingGuests = await db.select().from(groupGuests).where(eq(groupGuests.groupId, groupId));
 
-  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} />;
+    const pastMeetings = await db.select().from(groupMeetings).where(eq(groupMeetings.groupId, groupId));
+  const pastAttendances = await db.select().from(groupMeetingAttendance)
+    .innerJoin(groupMeetings, eq(groupMeetingAttendance.meetingId, groupMeetings.id))
+    .where(eq(groupMeetings.groupId, groupId));
+
+  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} pastMeetings={pastMeetings} pastAttendances={pastAttendances} />;
 }
