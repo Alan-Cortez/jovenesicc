@@ -50,5 +50,6 @@ export default async function EvaluarGrupoPage({ params }: { params: Promise<{ i
     .innerJoin(groupMeetings, eq(groupMeetingAttendance.meetingId, groupMeetings.id))
     .where(eq(groupMeetings.groupId, groupId));
 
-  const pastAttendances = rawAttendances.map(r => r.group_meeting_attendance);\n  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} pastMeetings={pastMeetings} pastAttendances={pastAttendances} />;
+  const pastAttendances = rawAttendances.map(r => r.group_meeting_attendance);
+  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} pastMeetings={pastMeetings} pastAttendances={pastAttendances} />;
 }
