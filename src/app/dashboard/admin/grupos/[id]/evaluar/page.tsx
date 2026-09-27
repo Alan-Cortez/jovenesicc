@@ -46,9 +46,9 @@ export default async function EvaluarGrupoPage({ params }: { params: Promise<{ i
   const existingGuests = await db.select().from(groupGuests).where(eq(groupGuests.groupId, groupId));
 
     const pastMeetings = await db.select().from(groupMeetings).where(eq(groupMeetings.groupId, groupId));
-  const pastAttendances = await db.select().from(groupMeetingAttendance)
+  const rawAttendances = await db.select().from(groupMeetingAttendance)
     .innerJoin(groupMeetings, eq(groupMeetingAttendance.meetingId, groupMeetings.id))
     .where(eq(groupMeetings.groupId, groupId));
 
-  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} pastMeetings={pastMeetings} pastAttendances={pastAttendances} />;
+  const pastAttendances = rawAttendances.map(r => r.group_meeting_attendance);\n  return <EvaluarClient group={groupData} members={groupMembers} existingGuests={existingGuests} pastMeetings={pastMeetings} pastAttendances={pastAttendances} />;
 }
