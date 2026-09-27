@@ -127,6 +127,33 @@ export default function EvaluarClient({
     });
   };
 
+  const getExemptUserIds = () => {
+    const previousMeetings = pastMeetings
+      .filter(m => m.date < date && m.id !== editingMeetingId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 3);
+
+    if (previousMeetings.length < 3) return [];
+
+    const exemptIds: number[] = [];
+    members.forEach(m => {
+      let consecutiveAbsences = 0;
+      for (const meeting of previousMeetings) {
+        const attendance = pastAttendances.find(a => a.meetingId === meeting.id && a.userId === m.id);
+        if (!attendance || attendance.puntualidad === 0) {
+          consecutiveAbsences++;
+        } else {
+          break;
+        }
+      }
+      if (consecutiveAbsences === 3) {
+        exemptIds.push(m.id);
+      }
+    });
+
+    return exemptIds;
+  };
+
   const calculateTotal = () => {
     let total = 0;
     
@@ -143,10 +170,13 @@ export default function EvaluarClient({
       total += names.length * 3;
     });
 
+    const exemptUserIds = getExemptUserIds();
     const evals = Object.values(evaluations);
+    const activeEvals = evals.filter(e => !exemptUserIds.includes(e.userId));
+
     if (evals.length > 0) {
-      const hasAbsences = evals.some(e => e.puntualidad === 0);
-      const allPerfectPunctuality = evals.every(e => e.puntualidad === 5);
+      const hasAbsences = activeEvals.some(e => e.puntualidad === 0);
+      const allPerfectPunctuality = activeEvals.length > 0 && activeEvals.every(e => e.puntualidad === 5);
       
       if (!hasAbsences) total += 5;
       if (!hasAbsences && allPerfectPunctuality) total += 5;
@@ -181,6 +211,7 @@ export default function EvaluarClient({
       newGuests: newGuestsArray,
       attendedGuestIds,
       evaluations: Object.values(evaluations),
+      exemptUserIds: getExemptUserIds(),
     });
 
     if (result.error) {
@@ -269,6 +300,11 @@ export default function EvaluarClient({
                         )}
                       </div>
                       <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{member.name}</span>
+                      {getExemptUserIds().includes(member.id) && (
+                        <span style={{ fontSize: '0.7rem', backgroundColor: 'rgba(255, 107, 107, 0.2)', color: '#ff6b6b', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>
+                          Inactivo (No afecta bono)
+                        </span>
+                      )}
                     </div>
 
                     <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>

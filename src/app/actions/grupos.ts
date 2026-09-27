@@ -202,6 +202,7 @@ export async function evaluateGroupAction(data: {
   newGuests: { invitedBy: number, name: string }[];
   attendedGuestIds: number[];
   evaluations: { userId: number; tematica: number; puntualidad: number; bibliaCuaderno: number }[];
+  exemptUserIds?: number[];
 }) {
   const admin = await verifyAdmin();
   if (!admin) return { error: 'No autorizado' };
@@ -216,8 +217,11 @@ export async function evaluateGroupAction(data: {
     let groupTotal = 0;
 
     if (data.evaluations.length > 0) {
-      const hasAbsences = data.evaluations.some(e => e.puntualidad === 0);
-      const allPerfectPunctuality = data.evaluations.every(e => e.puntualidad === 5);
+      const exemptIds = data.exemptUserIds || [];
+      const activeEvals = data.evaluations.filter(e => !exemptIds.includes(e.userId));
+      
+      const hasAbsences = activeEvals.some(e => e.puntualidad === 0);
+      const allPerfectPunctuality = activeEvals.length > 0 && activeEvals.every(e => e.puntualidad === 5);
 
       if (!hasAbsences) perfectAttendanceBonus = 5;
       if (allPerfectPunctuality && !hasAbsences) perfectPunctualityBonus = 5;
