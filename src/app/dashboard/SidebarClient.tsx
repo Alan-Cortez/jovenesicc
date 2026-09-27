@@ -13,7 +13,6 @@ const NAV_ITEMS = [
   { href: '/dashboard/planes', label: 'Planes de Lectura' },
   { href: '/dashboard/devocionales', label: 'Devocionales' },
   { href: '/dashboard/misiones', label: 'Misiones' },
-  { href: '/dashboard/oracion', label: 'Diario de Oracion' },
   { href: '/dashboard/calendario', label: 'Calendario' },
   { href: '/dashboard/lideres', label: 'Tabla de Lideres' },
 ];
