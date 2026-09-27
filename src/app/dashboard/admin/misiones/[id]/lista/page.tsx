@@ -6,7 +6,7 @@ import { tasks, users, taskSubmissions, groups } from '@/lib/schema';
 import { eq, and } from 'drizzle-orm';
 import Link from 'next/link';
 import { quickCompleteMissionAction, quickRevokeMissionAction } from '@/app/actions/admin';
-import Initials from '@/components/Initials';
+
 
 export default async function VerListaMisionPage({ params }: { params: { id: string } }) {
   const cookieStore = await cookies();
@@ -78,7 +78,7 @@ export default async function VerListaMisionPage({ params }: { params: { id: str
               <tr key={u.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                 <td style={{ padding: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Initials name={u.name} size={32} avatar={u.avatar} />
+                    {u.avatar ? <img src={u.avatar} alt='Avatar' style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} /> : <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>{u.name.substring(0, 2).toUpperCase()}</div>}
                     <span style={{ fontWeight: '600' }}>{u.name}</span>
                   </div>
                 </td>
