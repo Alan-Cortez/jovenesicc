@@ -45,7 +45,19 @@ export async function updateProfileSettingsAction(formData: FormData) {
       const [year, month, day] = birthDate.split('-');
       if (year && month && day) {
         const yy = year.slice(-2);
-        updateData.matricula = `${day}${month}${yy}`;
+        let baseMatricula = `${day}${month}${yy}`;
+        let newMatricula = baseMatricula;
+        let suffixAscii = 65; // 'A'
+        
+        while (true) {
+          const existing = await db.select({ id: users.id }).from(users).where(eq(users.matricula, newMatricula)).limit(1);
+          if (existing.length === 0 || existing[0].id === user.id) {
+            break;
+          }
+          newMatricula = `${baseMatricula}${String.fromCharCode(suffixAscii)}`;
+          suffixAscii++;
+        }
+        updateData.matricula = newMatricula;
       }
     }
     
@@ -91,7 +103,7 @@ export async function updateProfileSettingsAction(formData: FormData) {
     }
 
     revalidatePath('/dashboard');
-    return { success: true };
+    return { success: true, newMatricula: updateData.matricula || user.matricula };
   } catch (error: any) {
     console.error('Error updating profile:', error);
     if (error.message?.includes('UNIQUE') || error.message?.includes('matricula')) {
