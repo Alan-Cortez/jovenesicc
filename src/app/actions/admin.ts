@@ -920,7 +920,7 @@ export async function quickCompleteMissionAction(formData: FormData) {
   if (isNaN(taskId) || isNaN(targetUserId)) return;
 
   try {
-    const { eq, and } = await import('drizzle-orm');
+    const { eq, and, sql } = await import('drizzle-orm');
     const { tasks, taskSubmissions, users, xpLog } = await import('@/lib/schema');
     
     // Check if submission already exists
