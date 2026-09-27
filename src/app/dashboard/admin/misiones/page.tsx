@@ -77,14 +77,18 @@ export default async function AdminMisionesPage() {
                         </span>
                       </td>
                       <td style={{ padding: '12px' }}>
-                        <form action={async (formData) => {
-                          'use server';
-                          const { deleteMissionAction } = await import('@/app/actions/admin');
-                          await deleteMissionAction(formData);
-                        }}>
-                          <input type="hidden" name="taskId" value={m.id} />
-                          <button type="submit" style={{ background: 'transparent', border: '1px solid #ff6b6b', color: '#ff6b6b', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Eliminar</button>
-                        </form>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          <a href={`/dashboard/admin/misiones/${m.id}/lista`} style={{ background: 'var(--color-primary)', color: 'var(--color-tertiary)', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 'bold' }}>Ver Lista</a>
+                          <a href={`/dashboard/admin/misiones/${m.id}/editar`} style={{ background: 'transparent', border: '1px solid #ffaa00', color: '#ffaa00', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontSize: '0.75rem' }}>Editar</a>
+                          <form action={async (formData) => {
+                            'use server';
+                            const { deleteMissionAction } = await import('@/app/actions/admin');
+                            await deleteMissionAction(formData);
+                          }}>
+                            <input type="hidden" name="taskId" value={m.id} />
+                            <button type="submit" style={{ background: 'transparent', border: '1px solid #ff6b6b', color: '#ff6b6b', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Eliminar</button>
+                          </form>
+                        </div>
                       </td>
                   </tr>
                 ))}

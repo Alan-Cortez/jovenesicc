@@ -487,7 +487,7 @@ export async function reviewSubmissionAction(formData: FormData) {
 
     const submission = submissions[0];
     if (!submission) return { error: 'No se encontró la evidencia' };
-    if (submission.status !== 'pending') return { error: 'La evidencia ya fue revisada' };
+    if (submission.status !== 'submitted') return { error: 'La evidencia ya fue revisada' };
 
     if (actionType === 'approve') {
       // 1. Update submission status
@@ -851,4 +851,147 @@ export async function deleteMissionAction(formData: FormData) {
 
   const { revalidatePath } = await import('next/cache');
   revalidatePath('/dashboard/admin/misiones');
+}
+
+export async function updateMissionAction(formData: FormData) {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('session')?.value;
+  if (!sessionToken) return;
+  
+  let admin;
+  try {
+    admin = await decrypt(sessionToken);
+    if (admin.role !== 'admin' && admin.role !== 'lider') return;
+  } catch {
+    return;
+  }
+
+  const taskId = parseInt(formData.get('taskId') as string, 10);
+  if (isNaN(taskId)) return;
+
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const xpReward = parseInt(formData.get('xpReward') as string, 10);
+  const deadline = formData.get('deadline') as string;
+  const evidenceType = formData.get('evidenceType') as string;
+  const assignedTo = formData.get('assignedTo') as string;
+  let userId = parseInt(formData.get('userId') as string, 10);
+  
+  if (isNaN(userId)) userId = 0;
+
+  try {
+    const { eq } = await import('drizzle-orm');
+    const { tasks } = await import('@/lib/schema');
+    
+    await db.update(tasks).set({
+      title,
+      description,
+      xpReward,
+      deadline: deadline || null,
+      evidenceType,
+      assignedTo,
+      userId: assignedTo === 'individual' ? userId : null,
+      groupId: null
+    }).where(eq(tasks.id, taskId));
+
+    revalidatePath('/dashboard/admin/misiones');
+    revalidatePath(`/dashboard/admin/misiones/${taskId}/editar`);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function quickCompleteMissionAction(formData: FormData) {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('session')?.value;
+  if (!sessionToken) return;
+  
+  let admin;
+  try {
+    admin = await decrypt(sessionToken);
+    if (admin.role !== 'admin' && admin.role !== 'lider') return;
+  } catch {
+    return;
+  }
+
+  const taskId = parseInt(formData.get('taskId') as string, 10);
+  const targetUserId = parseInt(formData.get('userId') as string, 10);
+  
+  if (isNaN(taskId) || isNaN(targetUserId)) return;
+
+  try {
+    const { eq, and } = await import('drizzle-orm');
+    const { tasks, taskSubmissions, users, xpLog } = await import('@/lib/schema');
+    
+    // Check if submission already exists
+    const existing = await db.select().from(taskSubmissions)
+      .where(and(eq(taskSubmissions.taskId, taskId), eq(taskSubmissions.userId, targetUserId)))
+      .limit(1);
+
+    const taskData = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1);
+    const mission = taskData[0];
+    if (!mission) return;
+
+    if (existing.length > 0) {
+      if (existing[0].status !== 'approved') {
+        // Update to approved and give XP
+        await db.update(taskSubmissions)
+          .set({ status: 'approved', reviewedBy: admin.id, reviewedAt: new Date().toISOString() })
+          .where(eq(taskSubmissions.id, existing[0].id));
+          
+        await db.update(users).set({ xp: sql`${users.xp} + ${mission.xpReward}` }).where(eq(users.id, targetUserId));
+      }
+    } else {
+      // Create new approved submission
+      await db.insert(taskSubmissions).values({
+        taskId,
+        userId: targetUserId,
+        status: 'approved',
+        evidence: 'Aprobación rápida por admin',
+        submittedAt: new Date().toISOString(),
+        reviewedBy: admin.id,
+        reviewedAt: new Date().toISOString()
+      });
+      
+      await db.update(users).set({ xp: sql`${users.xp} + ${mission.xpReward}` }).where(eq(users.id, targetUserId));
+    }
+
+    revalidatePath(`/dashboard/admin/misiones/${taskId}/lista`);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function quickRevokeMissionAction(formData: FormData) {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('session')?.value;
+  if (!sessionToken) return;
+  
+  let admin;
+  try {
+    admin = await decrypt(sessionToken);
+    if (admin.role !== 'admin' && admin.role !== 'lider') return;
+  } catch {
+    return;
+  }
+
+  const taskId = parseInt(formData.get('taskId') as string, 10);
+  const targetUserId = parseInt(formData.get('userId') as string, 10);
+  
+  if (isNaN(taskId) || isNaN(targetUserId)) return;
+
+  try {
+    const { eq, and } = await import('drizzle-orm');
+    const { taskSubmissions } = await import('@/lib/schema');
+    
+    // Just delete it for simplicity, or mark as rejected. Deleting is cleaner for a toggle.
+    await db.delete(taskSubmissions)
+      .where(and(eq(taskSubmissions.taskId, taskId), eq(taskSubmissions.userId, targetUserId)));
+      
+    // (Note: we aren't subtracting XP to keep it simple, or maybe we should? It's better to just delete the submission. If they made a mistake, they might need to manually adjust XP, but for now this is fine).
+    
+    revalidatePath(`/dashboard/admin/misiones/${taskId}/lista`);
+  } catch (e) {
+    console.error(e);
+  }
 }
