@@ -203,9 +203,9 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
               </div>
               <div className={styles.colName}>
                 <Initials name={u.name} size={38} color={isMe ? 'rgba(255,255,255,0.2)' : undefined} avatar={u.avatar} />
-                <div>
-                  <span className={styles.nameText}>
-                    {u.name}
+                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                    <span className={styles.nameText} style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {u.name}
                     {isMe && <span className={styles.meTag}> (Tu)</span>}
                   </span>
                   <span className={styles.levelBadge}>Nivel {u.level}</span>
@@ -283,7 +283,7 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
               </div>
               <div className={styles.colName}>
                 <Initials name={g.name} size={38} color={gc + '33'} />
-                <span className={styles.nameText}>{g.name}</span>
+                <span className={styles.nameText} style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.name}</span>
               </div>
               <div className={styles.colStats}>
                 <span className={styles.xpText}>{g.totalScore.toLocaleString()} pts</span>
