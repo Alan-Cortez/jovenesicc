@@ -101,19 +101,16 @@ export async function finishDayAction(
       .set({ status: 'completed', completedAt: new Date().toISOString() })
       .where(eq(readingProgress.id, progress[0].id));
 
-    // 5. Add XP to User
-    const { sql } = await import('drizzle-orm');
-    await db.update(users).set({ xp: sql`${users.xp} + ${xpReward}` }).where(eq(users.id, user.id));
-
-    // 6. Log XP
-    await db.insert(xpLog).values({
+    // 5. Grant XP and update streak via gamification engine
+    const { grantXP, updateStreak } = await import('@/lib/gamification');
+    await grantXP({
       userId: user.id,
       amount: xpReward,
       reason: 'Lectura diaria completada',
       sourceType: 'reading',
       sourceId: planDayId,
-      createdAt: new Date().toISOString()
     });
+    await updateStreak(user.id);
 
     // 7. Unlock the next day
     // We need to find the day with the next DayNumber

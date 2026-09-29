@@ -31,10 +31,23 @@ export default async function PerfilPage() {
     if (groupResult[0]) groupName = groupResult[0].name;
   }
 
-  // XP para siguiente nivel
-  const xpForNextLevel = user.level * 500;
-  const xpProgress = Math.min((user.xp / xpForNextLevel) * 100, 100);
-  const totalXp = (user.level - 1) * 500 + user.xp;
+  // XP y Nivel (Gamification Engine)
+  const { getLevelInfo } = await import('@/lib/gamification');
+  const levelInfo = getLevelInfo(user.xp); // Nota: user.xp ahora es el totalXp
+  
+  // Obtener logros reales
+  const { userBadges, badges } = await import('@/lib/schema');
+  const earnedBadges = await db.select({
+    id: badges.id,
+    name: badges.name,
+    description: badges.description,
+    icon: badges.icon,
+    color: badges.color,
+    grantedAt: userBadges.grantedAt
+  })
+  .from(userBadges)
+  .innerJoin(badges, eq(userBadges.badgeId, badges.id))
+  .where(eq(userBadges.userId, user.id));
 
   // ── FEED: actividad del usuario ──
   // 1. Log de XP (lecturas completadas, misiones, devocionales, insignias)
@@ -238,12 +251,15 @@ export default async function PerfilPage() {
     groupId: user.groupId ?? null,
     groupName,
     xp: user.xp,
-    totalXp,
-    level: user.level,
+    totalXp: user.xp,
+    level: levelInfo.level,
+    levelName: levelInfo.name,
     streakCurrent: user.streakCurrent,
     streakBest: user.streakBest,
-    xpForNextLevel,
-    xpProgress,
+    xpIntoCurrentLevel: levelInfo.xpIntoCurrentLevel,
+    xpNeededForNext: levelInfo.xpNeededForNext,
+    xpProgress: levelInfo.progress,
+    isMaxLevel: levelInfo.isMaxLevel,
     joinedAt: user.joinedAt,
     shareDevotionals: user.shareDevotionals,
   };
@@ -254,6 +270,7 @@ export default async function PerfilPage() {
       currentTheme={currentTheme}
       feed={feedItems.slice(0, 20)}
       posts={postsWithDetails}
+      earnedBadges={earnedBadges}
     />
   );
 }

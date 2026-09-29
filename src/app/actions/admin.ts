@@ -495,23 +495,18 @@ export async function reviewSubmissionAction(formData: FormData) {
         .set({ status: 'approved', reviewedBy: admin.id, reviewedAt: new Date().toISOString() })
         .where(eq(taskSubmissions.id, submissionId));
       
-      // 2. Add XP to User
-      await db.update(users)
-        .set({ xp: sql`${users.xp} + ${submission.xpReward}` })
-        .where(eq(users.id, submission.userId));
-        
-      // 3. Log XP
-      await db.insert(xpLog).values({
+      // 2. Grant XP via gamification engine
+      const { grantXP } = await import('@/lib/gamification');
+      await grantXP({
         userId: submission.userId,
         amount: submission.xpReward,
         reason: 'Misión completada',
         sourceType: 'task',
         sourceId: submission.taskId,
         grantedBy: admin.id,
-        createdAt: new Date().toISOString()
       });
 
-      // 4. Send Notification
+      // 3. Send Notification
       await createNotification({
         userId: submission.userId,
         actorId: admin.id,
@@ -939,7 +934,8 @@ export async function quickCompleteMissionAction(formData: FormData) {
           .set({ status: 'approved', reviewedBy: admin.id, reviewedAt: new Date().toISOString() })
           .where(eq(taskSubmissions.id, existing[0].id));
           
-        await db.update(users).set({ xp: sql`${users.xp} + ${mission.xpReward}` }).where(eq(users.id, targetUserId));
+        const { grantXP: grantXP1 } = await import('@/lib/gamification');
+        await grantXP1({ userId: targetUserId, amount: mission.xpReward, reason: 'Misión completada', sourceType: 'task', sourceId: taskId, grantedBy: admin.id });
       }
     } else {
       // Create new approved submission
@@ -953,7 +949,8 @@ export async function quickCompleteMissionAction(formData: FormData) {
         reviewedAt: new Date().toISOString()
       });
       
-      await db.update(users).set({ xp: sql`${users.xp} + ${mission.xpReward}` }).where(eq(users.id, targetUserId));
+      const { grantXP: grantXP2 } = await import('@/lib/gamification');
+      await grantXP2({ userId: targetUserId, amount: mission.xpReward, reason: 'Misión completada', sourceType: 'task', sourceId: taskId, grantedBy: admin.id });
     }
 
     revalidatePath(`/dashboard/admin/misiones/${taskId}/lista`);

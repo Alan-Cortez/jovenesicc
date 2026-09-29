@@ -80,6 +80,11 @@ export async function createDevotionalAction(formData: FormData) {
       isPublic,
     });
 
+    // Grant XP for devotional
+    const { grantXP, updateStreak } = await import('@/lib/gamification');
+    await grantXP({ userId: user.id, amount: 10, reason: 'Devocional publicado', sourceType: 'devotional' });
+    await updateStreak(user.id);
+
     revalidatePath('/dashboard/devocionales');
     return { success: true };
   } catch (error) {

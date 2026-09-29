@@ -29,6 +29,10 @@ export async function createPostAction(data: { content: string; imageUrl?: strin
       content: data.content,
       imageUrl: data.imageUrl || null,
     });
+    // Grant XP for posting (max 1/day handled by limiting UI)
+    const { grantXP } = await import('@/lib/gamification');
+    await grantXP({ userId: user.id, amount: 5, reason: 'Publicación creada', sourceType: 'devotional' });
+
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {

@@ -49,6 +49,10 @@ export async function addSongSuggestionAction(url: string) {
       actorId: user.id
     });
     
+    // Grant small XP for song suggestion
+    const { grantXP } = await import('@/lib/gamification');
+    await grantXP({ userId: user.id, amount: 3, reason: 'Canción sugerida', sourceType: 'manual' });
+
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {

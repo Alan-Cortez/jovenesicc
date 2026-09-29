@@ -18,10 +18,13 @@ type UserData = {
   xp: number;
   totalXp: number;
   level: number;
+  levelName?: string;
   streakCurrent: number;
   streakBest: number;
-  xpForNextLevel: number;
+  xpIntoCurrentLevel?: number;
+  xpNeededForNext?: number;
   xpProgress: number;
+  isMaxLevel?: boolean;
   joinedAt: string;
   shareDevotionals: number;
 };
@@ -56,11 +59,13 @@ export default function PerfilClient({
   currentTheme,
   feed,
   posts,
+  earnedBadges = [],
 }: {
   user: UserData;
   currentTheme: string;
   feed: FeedItem[];
   posts?: any[];
+  earnedBadges?: any[];
 }) {
   const [activeTab, setActiveTab] = useState<'inicio' | 'publicaciones'>('inicio');
   const [isEditing, setIsEditing] = useState(false);
@@ -276,7 +281,7 @@ export default function PerfilClient({
                   <span className={styles.levelPill}>Nivel {user.level}</span>
                 </div>
                 <p className={styles.xpSub}>
-                  {user.xp.toLocaleString()} / {user.xpForNextLevel.toLocaleString()} XP
+                  {user.xp.toLocaleString()} / {user.xpNeededForNext?.toLocaleString()} XP
                 </p>
                 <div className={styles.xpTrack}>
                   <div className={styles.xpFill} style={{ width: `${user.xpProgress}%` }} />
@@ -286,7 +291,7 @@ export default function PerfilClient({
 
               {/* Logros resumidos */}
               <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Logros ({unlocked.length}/{allBadges.length})</h3>
+                <h3 className={styles.panelTitle}>Logros ({unlocked.length})</h3>
                 {unlocked.length === 0 ? (
                   <p className={styles.empty}>Completa actividades para desbloquear logros.</p>
                 ) : (
