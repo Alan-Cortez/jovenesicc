@@ -78,10 +78,15 @@ export default function NotificationBell() {
     }
   };
 
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr.replace(' ', 'T') + 'Z');
+    const formatTime = (dateStr: string) => {
+    if (!dateStr) return '';
+    let isoStr = dateStr;
+    if (!isoStr.includes('T')) isoStr = isoStr.replace(' ', 'T');
+    if (!isoStr.endsWith('Z')) isoStr += 'Z';
+    const date = new Date(isoStr);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
+    if (isNaN(diffMs) || diffMs < 0) return 'Hace un momento';
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);

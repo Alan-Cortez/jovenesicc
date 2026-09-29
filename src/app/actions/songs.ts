@@ -45,7 +45,8 @@ export async function addSongSuggestionAction(url: string) {
       title: 'Nueva Canción',
       type: 'like', // un icono de corazon o similar
       content: user.name + ' ha agregado una nueva canción a la lista.',
-      assignedTo: 'all'
+      assignedTo: 'all',
+      actorId: user.id
     });
     
     revalidatePath('/dashboard');

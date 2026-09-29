@@ -84,17 +84,18 @@
 
 .title {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--color-text-main);
 }
 
 .markReadBtn {
   background: transparent;
   border: none;
-  color: #1da1f2;
-  font-size: 0.85rem;
-  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -113,8 +114,8 @@
 
 .item {
   display: flex;
-  gap: 14px;
-  padding: 16px 20px;
+  gap: 16px;
+  padding: 18px 24px;
   transition: background 0.2s;
   position: relative;
   cursor: pointer;
@@ -134,16 +135,16 @@
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--glass-border);
 }
 
 .avatarFallback {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(255,255,255,0.1);
   display: flex;
@@ -170,7 +171,7 @@
 
 .text {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-text-main);
   line-height: 1.4;
 }
@@ -200,10 +201,7 @@
 }
 
 .footer {
-  padding: 16px;
-  text-align: center;
-  border-top: 1px solid var(--glass-border);
-  background: rgba(0,0,0,0.2);
+  display: none;
 }
 
 .footerText {

@@ -113,6 +113,7 @@ export async function notifyMany(data: {
   assignedTo: string;
   groupId?: number | null;
   userId?: number | null;
+  actorId?: number;
 }) {
   try {
     let targetUsers: number[] = [];
@@ -124,6 +125,10 @@ export async function notifyMany(data: {
       targetUsers = res.map(r => r.id);
     } else if (data.assignedTo === 'individual' && data.userId) {
       targetUsers = [data.userId];
+    }
+
+    if (data.actorId) {
+      targetUsers = targetUsers.filter(id => id !== data.actorId);
     }
 
     if (targetUsers.length > 0) {
