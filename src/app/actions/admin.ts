@@ -6,7 +6,7 @@ import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { createNotification } from './notifications';
+import { createNotification, notifyMany } from './notifications';
 
 export async function createUserAction(formData: FormData) {
   const cookieStore = await cookies();

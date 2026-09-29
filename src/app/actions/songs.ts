@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { eq } from 'drizzle-orm';
+import { notifyMany } from './notifications';
 
 async function verifyAuth() {
   const cookieStore = await cookies();
@@ -38,6 +39,15 @@ export async function addSongSuggestionAction(url: string) {
       spotifyUrl: url,
       trackId,
     });
+    
+    // Notify everyone
+    await notifyMany({
+      title: 'Nueva Canción',
+      type: 'like', // un icono de corazon o similar
+      content: user.name + ' ha agregado una nueva canción a la lista.',
+      assignedTo: 'all'
+    });
+    
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
