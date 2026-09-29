@@ -142,8 +142,29 @@ export default function LideresClient({
   );
 }
 
+
+// Función helper para calcular empates
+function applyRanks<T extends { individualPoints?: number; totalScore?: number }>(
+  items: T[],
+  scoreKey: 'individualPoints' | 'totalScore'
+): (T & { _rank: number })[] {
+  let currentRank = 1;
+  let previousScore = -1;
+  return items.map((item, index) => {
+    const score = (item[scoreKey] as number) || 0;
+    if (index === 0) {
+      previousScore = score;
+    } else if (score < previousScore) {
+      currentRank = index + 1; // 1, 1, 3
+      previousScore = score;
+    }
+    return { ...item, _rank: currentRank };
+  });
+}
+
 function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; currentUserId: number }) {
-  const top3 = users.slice(0, 3);
+  const rankedUsers = applyRanks(users, 'individualPoints');
+  const top3 = rankedUsers.slice(0, 3);
   // Reordenar: 2, 1, 3 para el podio visual
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
   const podiumPositions = [2, 1, 3];
@@ -154,7 +175,8 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
       {top3.length > 0 && (
         <div className={styles.podiumSection}>
           {podiumOrder.map((u, idx) => {
-            const rank = podiumPositions[idx];
+            const visualSlot = podiumPositions[idx];
+            const rank = (u as any)._rank || visualSlot;
             const c = PODIUM_COLORS[rank];
             const heights = { 1: 210, 2: 170, 3: 150 };
             return (
@@ -164,10 +186,10 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
                 variants={itemVariants}
                 className={styles.podiumCard}
                 style={{
-                  height: heights[rank as keyof typeof heights],
+                  height: heights[rank as keyof typeof heights] || heights[3],
                   border: `1px solid ${c.border}`,
                   background: `linear-gradient(to top, ${c.bg}, rgba(255,255,255,0.03))`,
-                  order: rank === 1 ? 2 : rank === 2 ? 1 : 3,
+                  order: visualSlot === 1 ? 2 : visualSlot === 2 ? 1 : 3,
                 }}
               >
                 <div className={styles.rankBadge} style={{ background: c.badge }}>{rank}</div>
@@ -185,8 +207,8 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
 
       {/* Lista completa */}
       <div className={styles.list}>
-        {users.map((u, i) => {
-          const rank = i + 1;
+        {rankedUsers.map((u, i) => {
+          const rank = (u as any)._rank;
           const isMe = u.id === currentUserId;
           const medal = PODIUM_COLORS[rank];
           return (
@@ -229,7 +251,8 @@ function JovenesTab({ users, currentUserId }: { users: LeaderboardUser[]; curren
 }
 
 function GruposTab({ groups }: { groups: GroupRank[] }) {
-  const top3 = groups.slice(0, 3);
+  const rankedGroups = applyRanks(groups, 'totalScore');
+  const top3 = rankedGroups.slice(0, 3);
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
   const podiumPositions = [2, 1, 3];
   const GROUP_COLORS = ['#4ae290', '#4a90e2', '#e24a4a', '#e2c44a', '#a44ae2'];
@@ -239,8 +262,9 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
       {top3.length > 0 && (
         <div className={styles.podiumSection}>
           {podiumOrder.map((g, idx) => {
-            const rank = podiumPositions[idx];
-            const c = PODIUM_COLORS[rank];
+            const visualSlot = podiumPositions[idx];
+            const rank = (g as any)._rank || visualSlot;
+            const c = PODIUM_COLORS[rank] || PODIUM_COLORS[3];
             const heights = { 1: 210, 2: 170, 3: 150 };
             const gc = GROUP_COLORS[(g.id - 1) % GROUP_COLORS.length];
             return (
@@ -253,7 +277,7 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
                   height: heights[rank as keyof typeof heights],
                   border: `1px solid ${c.border}`,
                   background: `linear-gradient(to top, ${c.bg}, rgba(255,255,255,0.03))`,
-                  order: rank === 1 ? 2 : rank === 2 ? 1 : 3,
+                  order: visualSlot === 1 ? 2 : visualSlot === 2 ? 1 : 3,
                 }}
               >
                 <div className={styles.rankBadge} style={{ background: c.badge }}>{rank}</div>
@@ -270,8 +294,8 @@ function GruposTab({ groups }: { groups: GroupRank[] }) {
       )}
 
       <div className={styles.list}>
-        {groups.map((g, i) => {
-          const rank = i + 1;
+        {rankedGroups.map((g, i) => {
+          const rank = (g as any)._rank;
           const medal = PODIUM_COLORS[rank];
           const gc = GROUP_COLORS[(g.id - 1) % GROUP_COLORS.length];
           return (
