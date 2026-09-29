@@ -131,7 +131,8 @@ export default function PerfilClient({
               <div className={styles.panel}>
                 <h3 className={styles.panelTitle}>Editar perfil</h3>
                 <PerfilSettingsForm
-                  initialName={user.name}\n                    initialBio={user.bio}
+                  initialName={user.name}
+                    initialBio={user.bio}
                   initialAvatar={user.avatar}
                   initialEmail={user.email}
                   initialPhone={(user as any).phone}
