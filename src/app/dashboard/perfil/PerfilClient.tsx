@@ -275,38 +275,28 @@ export default function PerfilClient({
                 </ul>
               </div>
 
-              {/* Progreso de nivel */}
-              <div className={styles.panel}>
-                <div className={styles.xpHeader}>
-                  <h3 className={styles.panelTitle} style={{ marginBottom: 0 }}>Nivel</h3>
-                  <span className={styles.levelPill}>Nivel {user.level}</span>
-                </div>
-                <p className={styles.xpSub}>
-                  {user.xp.toLocaleString()} / {user.xpNeededForNext?.toLocaleString()} XP
-                </p>
-                <div className={styles.xpTrack}>
-                  <div className={styles.xpFill} style={{ width: `${user.xpProgress}%` }} />
-                </div>
-                <p className={styles.xpPct}>{Math.round(user.xpProgress)}% hacia el nivel {user.level + 1}</p>
-              </div>
-
-              {/* Logros resumidos */}
-              <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Logros ({unlocked.length})</h3>
-                {unlocked.length === 0 ? (
-                  <p className={styles.empty}>Completa actividades para desbloquear logros.</p>
-                ) : (
-                  <div className={styles.badgeMini}>
-                    {unlocked.map((b) => (
-                      <div key={b.label} className={styles.badgeMiniItem}>
-                        <div className={styles.badgeDot} />
-                        <span>{b.label}</span>
-                      </div>
-                    ))}
+                            {/* Progreso de nivel con Mascota */}
+              <div className={styles.panel} style={{ padding: 0, overflow: 'hidden' }}>
+                <LevelAvatar level={user.level} levelName={user.levelName || 'Semilla'} />
+                
+                <div style={{ padding: '1.5rem' }}>
+                  <div className={styles.xpHeader}>
+                    <h3 className={styles.panelTitle} style={{ marginBottom: 0, fontSize: '0.9rem' }}>Progreso de XP</h3>
+                    <span className={styles.levelPill} style={{ background: 'rgba(255,100,0,0.1)', color: '#ff9800' }}>
+                      {user.streakCurrent || 0} 🔥 Racha
+                    </span>
                   </div>
-                )}
+                  <p className={styles.xpSub} style={{ fontSize: '0.85rem' }}>
+                    {user.isMaxLevel ? '¡Nivel Máximo!' : `${user.xpIntoCurrentLevel?.toLocaleString() || user.xp.toLocaleString()} / ${user.xpNeededForNext?.toLocaleString() || '100'} XP`}
+                  </p>
+                  <div className={styles.xpTrack}>
+                    <div className={styles.xpFill} style={{ width: `${user.xpProgress}%`, background: 'linear-gradient(90deg, #ff9800, #ff5722)' }} />
+                  </div>
+                  <p className={styles.xpPct} style={{ fontSize: '0.75rem', marginTop: '4px' }}>
+                    {user.isMaxLevel ? 'Has alcanzado la cima' : `${Math.round(user.xpProgress)}% hacia el nivel ${user.level + 1}`}
+                  </p>
+                </div>
               </div>
-            </div>
 
             {/* ─── COLUMNA PRINCIPAL: FEED ─── */}
             <div className={styles.main}>
