@@ -37,6 +37,7 @@ export default async function PerfilPage() {
   
   // Obtener logros reales
   const { userBadges, badges } = await import('@/lib/schema');
+  const allBadges = await db.select().from(badges).orderBy(badges.name);
   const earnedBadges = await db.select({
     id: badges.id,
     name: badges.name,
@@ -271,6 +272,7 @@ export default async function PerfilPage() {
       feed={feedItems.slice(0, 20)}
       posts={postsWithDetails}
       earnedBadges={earnedBadges}
+      allBadges={allBadges}
     />
   );
 }

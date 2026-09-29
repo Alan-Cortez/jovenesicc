@@ -61,16 +61,19 @@ export default function PerfilClient({
   feed,
   posts,
   earnedBadges = [],
+  allBadges = [],
 }: {
   user: UserData;
   currentTheme: string;
   feed: FeedItem[];
   posts?: any[];
   earnedBadges?: any[];
+  allBadges?: any[];
 }) {
   const [activeTab, setActiveTab] = useState<'inicio' | 'publicaciones'>('inicio');
   const [isEditing, setIsEditing] = useState(false);
   const [activeEditTab, setActiveEditTab] = useState<'perfil' | 'preferencias' | 'seguridad'>('perfil');
+  const [showLevelInfo, setShowLevelInfo] = useState(false);
 
   const [feedFilter, setFeedFilter] = useState<FeedItem['type'] | 'all'>('all');
 
@@ -79,20 +82,7 @@ export default function PerfilClient({
     { key: 'publicaciones', label: 'Mis Publicaciones' },
   ] as const;
 
-  // Logros basados en datos reales
-  const allBadges = [
-    { label: 'Bienvenido', desc: 'Te uniste a la comunidad', unlocked: true },
-    { label: 'Primer nivel', desc: 'Alcanzaste el nivel 1', unlocked: user.level >= 1 },
-    { label: 'Racha de 7 dias', desc: 'Mantuviste 7 dias seguidos', unlocked: user.streakBest >= 7 },
-    { label: 'Racha de 30 dias', desc: 'Mantuviste 30 dias seguidos', unlocked: user.streakBest >= 30 },
-    { label: 'Nivel 5', desc: 'Alcanzaste el nivel 5', unlocked: user.level >= 5 },
-    { label: '1000 XP', desc: 'Acumulaste 1000 puntos', unlocked: user.totalXp >= 1000 },
-    { label: '5000 XP', desc: 'Acumulaste 5000 puntos', unlocked: user.totalXp >= 5000 },
-  ];
-
-  const unlocked = allBadges.filter((b) => b.unlocked);
-  const locked = allBadges.filter((b) => !b.unlocked);
-
+  const unlocked = earnedBadges || [];
   const filteredFeed =
     feedFilter === 'all' ? feed : feed.filter((f) => f.type === feedFilter);
 
@@ -276,7 +266,7 @@ export default function PerfilClient({
               </div>
 
               {/* Progreso de nivel con Mascota */}
-              <div className={styles.panel} style={{ padding: 0, overflow: 'hidden' }}>
+              <div className={styles.panel} style={{ padding: 0, overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' }} onClick={() => setShowLevelInfo(true)} onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                 <LevelAvatar level={user.level} levelName={user.levelName || 'Semilla'} />
                 
                 <div style={{ padding: '1.5rem' }}>
