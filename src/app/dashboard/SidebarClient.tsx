@@ -31,10 +31,12 @@ export default function SidebarClient({
   userName,
   userRole,
   pendingCount,
+  activeMissionsCount = 0,
 }: {
   userName: string;
   userRole: string;
   pendingCount: number;
+  activeMissionsCount?: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -85,7 +87,10 @@ export default function SidebarClient({
               onClick={() => setIsOpen(false)}
               prefetch
             >
-              {item.label}
+              <span>{item.label}</span>
+              {item.href === '/dashboard/misiones' && activeMissionsCount > 0 && (
+                <span className={styles.badge}>{activeMissionsCount > 99 ? '99+' : activeMissionsCount}</span>
+              )}
             </Link>
           ))}
 

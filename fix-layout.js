@@ -1,4 +1,8 @@
-import { cookies } from 'next/headers';
+const fs = require('fs');
+
+let c = fs.readFileSync('src/app/dashboard/layout.tsx', 'utf8');
+
+const replacement = `import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
@@ -65,3 +69,6 @@ export default async function DashboardLayout({
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/app/dashboard/layout.tsx', replacement);
