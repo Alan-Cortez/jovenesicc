@@ -21,9 +21,27 @@ export default function CalendarioClient({ userId, events }: { userId: number; e
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
+  
+  // Función para parsear fechas de forma segura y evitar que se atrasen 1 día por zonas horarias
+  const parseLocalDate = (dateStr: string) => {
+    if (!dateStr) return new Date();
+    // Si viene con Z, lo respetamos (ya es UTC explícito)
+    if (dateStr.endsWith('Z')) return new Date(dateStr);
+    
+    // Convertir espacios a T
+    let cleanStr = dateStr.replace(' ', 'T');
+    
+    // Si no tiene T (es decir, es solo 'YYYY-MM-DD'), forzamos una hora local como mediodía
+    if (!cleanStr.includes('T')) {
+      cleanStr += 'T12:00:00';
+    }
+    
+    return new Date(cleanStr);
+  };
+
   // Filtramos los eventos por mes y año actual
   const filteredEvents = events.filter(e => {
-    const d = new Date(e.startAt.includes('T') ? e.startAt : e.startAt.replace(' ', 'T') + 'Z');
+    const d = parseLocalDate(e.startAt);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
 
@@ -68,7 +86,7 @@ export default function CalendarioClient({ userId, events }: { userId: number; e
       ) : (
         <div className={styles.grid}>
           {filteredEvents.map((event) => {
-            const dateObj = new Date(event.startAt.includes('T') ? event.startAt : event.startAt.replace(' ', 'T') + 'Z');
+            const dateObj = parseLocalDate(event.startAt);
             const monthShort = months[dateObj.getMonth()].substring(0, 3);
             const dayNum = dateObj.getDate().toString().padStart(2, '0');
             

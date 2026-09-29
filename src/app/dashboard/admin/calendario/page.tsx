@@ -30,6 +30,15 @@ export default async function AdminCalendarioPage() {
     location: ''
   }));
 
+  
+  const parseLocalDate = (dateStr: string) => {
+    if (!dateStr) return new Date();
+    if (dateStr.endsWith('Z')) return new Date(dateStr);
+    let cleanStr = dateStr.replace(' ', 'T');
+    if (!cleanStr.includes('T')) cleanStr += 'T12:00:00';
+    return new Date(cleanStr);
+  };
+
   async function createEvent(formData: FormData) {
     'use server';
     const title = formData.get('title') as string;
@@ -84,7 +93,7 @@ export default async function AdminCalendarioPage() {
               <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', backgroundColor: 'var(--color-tertiary)', borderRadius: '8px' }}>
                 <div>
                   <h4 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{ev.title}</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>{new Date(ev.startAt).toLocaleString()}</p>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>{parseLocalDate(ev.startAt).toLocaleDateString()} {ev.startAt.includes('T') ? parseLocalDate(ev.startAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
                   <p style={{ fontSize: '0.9rem' }}>📍 {ev.location || 'Sin ubicación'}</p>
                 </div>
                 <form action={deleteEvent}>
