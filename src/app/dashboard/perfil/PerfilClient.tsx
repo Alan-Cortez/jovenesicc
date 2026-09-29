@@ -61,16 +61,15 @@ export default function PerfilClient({
   feed: FeedItem[];
   posts?: any[];
 }) {
-  const [activeTab, setActiveTab] = useState<
-    'inicio' | 'publicaciones' | 'configuracion'
-  >('inicio');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'publicaciones'>('inicio');
+  const [isEditing, setIsEditing] = useState(false);
+  const [activeEditTab, setActiveEditTab] = useState<'perfil' | 'preferencias' | 'seguridad'>('perfil');
 
   const [feedFilter, setFeedFilter] = useState<FeedItem['type'] | 'all'>('all');
 
   const tabs = [
     { key: 'inicio', label: 'Actividad' },
     { key: 'publicaciones', label: 'Mis Publicaciones' },
-    { key: 'configuracion', label: 'Configuracion' },
   ] as const;
 
   // Logros basados en datos reales
@@ -89,6 +88,86 @@ export default function PerfilClient({
 
   const filteredFeed =
     feedFilter === 'all' ? feed : feed.filter((f) => f.type === feedFilter);
+
+  if (isEditing) {
+    return (
+      <div className={styles.root}>
+        <div className={styles.twoCol} style={{ marginTop: '24px' }}>
+          {/* Sidebar */}
+          <div className={styles.aside}>
+            <div className={styles.panel}>
+              <h2 className={styles.panelTitle} style={{ fontSize: '1.4rem', marginBottom: '16px' }}>Configuración</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button 
+                  onClick={() => setActiveEditTab('perfil')} 
+                  style={{ textAlign: 'left', padding: '12px 16px', background: activeEditTab === 'perfil' ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', borderRadius: '8px', color: 'var(--color-text-main)', cursor: 'pointer', fontWeight: activeEditTab === 'perfil' ? 'bold' : 'normal' }}
+                >
+                  Editar perfil
+                </button>
+                <button 
+                  onClick={() => setActiveEditTab('preferencias')} 
+                  style={{ textAlign: 'left', padding: '12px 16px', background: activeEditTab === 'preferencias' ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', borderRadius: '8px', color: 'var(--color-text-main)', cursor: 'pointer', fontWeight: activeEditTab === 'preferencias' ? 'bold' : 'normal' }}
+                >
+                  Preferencias de la app
+                </button>
+                <button 
+                  onClick={() => setActiveEditTab('seguridad')} 
+                  style={{ textAlign: 'left', padding: '12px 16px', background: activeEditTab === 'seguridad' ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', borderRadius: '8px', color: 'var(--color-text-main)', cursor: 'pointer', fontWeight: activeEditTab === 'seguridad' ? 'bold' : 'normal' }}
+                >
+                  Seguridad
+                </button>
+              </div>
+              <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '16px 0' }} />
+              <button onClick={() => setIsEditing(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', padding: '8px' }}>
+                ← Volver al perfil
+              </button>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className={styles.main}>
+            {activeEditTab === 'perfil' && (
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Editar perfil</h3>
+                <PerfilSettingsForm
+                  initialName={user.name}
+                  initialAvatar={user.avatar}
+                  initialEmail={user.email}
+                  initialPhone={(user as any).phone}
+                  initialBirthDate={(user as any).birthDate}
+                  currentTheme={currentTheme}
+                />
+              </div>
+            )}
+            {activeEditTab === 'preferencias' && (
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Preferencias de la app</h3>
+                <div className={styles.prefList}>
+                  <PrefRow title="Notificaciones" desc="Recibir alertas de nuevos devocionales y misiones." defaultChecked />
+                  <PrefRow title="XP público" desc="Hacer que mi XP sea visible en la tabla de líderes." defaultChecked />
+                  <PrefRow title="Compartir devocionales" desc="Permitir que tus líderes vean tus devocionales." defaultChecked={!!user.shareDevotionals} />
+                </div>
+              </div>
+            )}
+            {activeEditTab === 'seguridad' && (
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Seguridad</h3>
+                <div className={styles.secList}>
+                  <SecRow title="Contraseña establecida" desc="Tu cuenta está protegida con contraseña." ok />
+                  <SecRow title="Perfil privado activo" desc="Solo miembros de la comunidad pueden verte." ok />
+                  <SecRow
+                    title={user.email ? 'Correo registrado' : 'Correo no registrado'}
+                    desc={user.email || 'Agrega un correo en la pestaña Editar perfil.'}
+                    ok={!!user.email}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.root}>
@@ -114,6 +193,9 @@ export default function PerfilClient({
               {ROLE_LABELS[user.role] ?? user.role}
               {' · '}{user.groupName}
             </p>
+            <button onClick={() => setIsEditing(true)} className={styles.filterBtn} style={{ marginTop: '12px', background: 'var(--color-primary)', color: 'var(--color-tertiary)', border: 'none' }}>
+              Editar Perfil
+            </button>
           </div>
 
           <div className={styles.quickStats}>
@@ -284,46 +366,7 @@ export default function PerfilClient({
           </div>
         )}
 
-        {/* ──── CONFIGURACION ──── */}
-        {activeTab === 'configuracion' && (
-          <div className={styles.twoCol}>
-            <div className={styles.aside}>
-              <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Configuracion de cuenta</h3>
-                <PerfilSettingsForm
-                  initialName={user.name}
-                  initialAvatar={user.avatar}
-                  initialEmail={user.email}
-                  initialPhone={(user as any).phone}
-                  initialBirthDate={(user as any).birthDate}
-                  currentTheme={currentTheme}
-                />
-              </div>
-            </div>
-            <div className={styles.main}>
-              <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Preferencias de la app</h3>
-                <div className={styles.prefList}>
-                  <PrefRow title="Notificaciones" desc="Recibir alertas de nuevos devocionales y misiones." defaultChecked />
-                  <PrefRow title="XP publico" desc="Hacer que mi XP sea visible en la tabla de lideres." defaultChecked />
-                  <PrefRow title="Compartir devocionales" desc="Permitir que tus lideres vean tus devocionales." defaultChecked={!!user.shareDevotionals} />
-                </div>
-              </div>
-              <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Seguridad</h3>
-                <div className={styles.secList}>
-                  <SecRow title="Contrasena establecida" desc="Tu cuenta esta protegida con contrasena." ok />
-                  <SecRow title="Perfil privado activo" desc="Solo miembros de la comunidad pueden verte." ok />
-                  <SecRow
-                    title={user.email ? 'Correo registrado' : 'Correo no registrado'}
-                    desc={user.email || 'Agrega un correo en Configuracion de Cuenta.'}
-                    ok={!!user.email}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );
