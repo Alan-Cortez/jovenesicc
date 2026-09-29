@@ -275,7 +275,7 @@ export default function PerfilClient({
                 </ul>
               </div>
 
-                            {/* Progreso de nivel con Mascota */}
+              {/* Progreso de nivel con Mascota */}
               <div className={styles.panel} style={{ padding: 0, overflow: 'hidden' }}>
                 <LevelAvatar level={user.level} levelName={user.levelName || 'Semilla'} />
                 
@@ -297,6 +297,23 @@ export default function PerfilClient({
                   </p>
                 </div>
               </div>
+
+              <div className={styles.panel}>
+                <h3 className={styles.panelTitle}>Logros ({unlocked.length})</h3>
+                {unlocked.length === 0 ? (
+                  <p className={styles.empty}>Completa actividades para desbloquear logros.</p>
+                ) : (
+                  <div className={styles.badgeMini}>
+                    {unlocked.map((b) => (
+                      <div key={b.label} className={styles.badgeMiniItem}>
+                        <div className={styles.badgeDot} />
+                        <span>{b.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* ─── COLUMNA PRINCIPAL: FEED ─── */}
             <div className={styles.main}>
