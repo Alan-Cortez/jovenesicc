@@ -154,8 +154,8 @@ function applyRanks<T extends { individualPoints?: number; totalScore?: number }
     const score = (item[scoreKey] as number) || 0;
     if (index === 0) {
       previousScore = score;
-    } else if (score < previousScore) {
-      currentRank = index + 1; // 1, 1, 3
+      } else if (score < previousScore) {
+      currentRank += 1; // 1, 1, 2 (dense ranking)
       previousScore = score;
     }
     return { ...item, _rank: currentRank };
