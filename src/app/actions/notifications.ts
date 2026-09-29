@@ -115,7 +115,7 @@ export async function notifyMany(data: {
   userId?: number | null;
 }) {
   try {
-    let targetUsers = [];
+    let targetUsers: number[] = [];
     if (data.assignedTo === 'all') {
       const res = await db.select({ id: users.id }).from(users).where(eq(users.isActive, 1));
       targetUsers = res.map(r => r.id);
