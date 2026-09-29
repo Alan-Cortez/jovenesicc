@@ -1,0 +1,114 @@
+.avatarContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-radius: 24px;
+  background: rgba(20, 20, 25, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Fire breathing animation */
+@keyframes firePulse {
+  0% {
+    box-shadow: 0 0 20px 0px var(--glow-color, rgba(255, 100, 0, 0.2)),
+                inset 0 0 20px 0px var(--glow-color, rgba(255, 100, 0, 0.1));
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px 10px var(--glow-color, rgba(255, 100, 0, 0.4)),
+                inset 0 0 30px 5px var(--glow-color, rgba(255, 100, 0, 0.2));
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 20px 0px var(--glow-color, rgba(255, 100, 0, 0.2)),
+                inset 0 0 20px 0px var(--glow-color, rgba(255, 100, 0, 0.1));
+    transform: scale(1);
+  }
+}
+
+.avatarIconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(30,30,40,0.8) 0%, rgba(10,10,15,0.9) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  animation: firePulse 4s infinite ease-in-out;
+  z-index: 2;
+}
+
+.icon {
+  color: var(--icon-color, #fff);
+  filter: drop-shadow(0 0 10px var(--glow-color));
+  width: 50px;
+  height: 50px;
+  transition: all 0.5s ease;
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Background gradient for the whole card based on level */
+.bgGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.levelInfo {
+  margin-top: 1.5rem;
+  text-align: center;
+  z-index: 2;
+}
+
+.levelName {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+.levelNumber {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.stageLabel {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 2px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--icon-color);
+  font-weight: 500;
+}

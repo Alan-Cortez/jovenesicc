@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import PerfilSettingsForm from './SettingsForm';
 import SocialFeed from '../SocialFeed';
+import LevelAvatar from '@/components/gamification/LevelAvatar';
 import styles from './perfil.module.css';
 
 type UserData = {
