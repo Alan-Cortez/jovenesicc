@@ -20,6 +20,46 @@ export default function PerfilSettingsForm({
 }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null);
+  const [compressedAvatar, setCompressedAvatar] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 500;
+        const MAX_HEIGHT = 500;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Compress to JPEG with 0.7 quality
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        setCompressedAvatar(dataUrl);
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -53,7 +93,8 @@ export default function PerfilSettingsForm({
       
       <div>
         <label style={{ display: 'block', fontSize: '0.8rem', color: '#a0aab2', marginBottom: '8px' }}>Foto de Perfil (Galería)</label>
-        <input type="file" name="avatar" accept="image/*" className="input-field" style={{ backgroundColor: 'var(--glass-bg)' }} />
+        <input type="file" accept="image/*" className="input-field" style={{ backgroundColor: 'var(--glass-bg)' }} onChange={handleFileChange} />
+        {compressedAvatar && <input type="hidden" name="avatarBase64" value={compressedAvatar} />}
         <span style={{ fontSize: '0.7rem', color: '#63657a', marginTop: '4px', display: 'block' }}>Selecciona una imagen desde tu dispositivo.</span>
       </div>
 

@@ -23,6 +23,7 @@ export async function updateProfileSettingsAction(formData: FormData) {
   const name = formData.get('name') as string;
   const newPassword = formData.get('password') as string;
   const avatarFile = formData.get('avatar') as File;
+  const avatarBase64 = formData.get('avatarBase64') as string;
   const theme = formData.get('theme') as string;
   const email = formData.get('email') as string;
   const phone = formData.get('phone') as string;
@@ -62,7 +63,9 @@ export async function updateProfileSettingsAction(formData: FormData) {
     }
     
     // Handle File upload to Base64
-    if (avatarFile && avatarFile.size > 0) {
+    if (avatarBase64 && avatarBase64.startsWith('data:image')) {
+      updateData.avatar = avatarBase64;
+    } else if (avatarFile && avatarFile.size > 0) {
       if (avatarFile.size > 5 * 1024 * 1024) { // 5MB limit
         return { error: 'La imagen de perfil no debe superar los 5MB' };
       }
