@@ -460,7 +460,9 @@ export const notifications = sqliteTable("notifications", {
 	id: integer().primaryKey({ autoIncrement: true }),
 	userId: integer("user_id").notNull().references(() => users.id),
 	actorId: integer("actor_id").references(() => users.id), // Who performed the action
-	type: text().notNull(), // 'like', 'comment', 'mission', 'level', 'system', etc.
+	type: text().notNull(),
+	title: text().notNull().default(''),
+	body: text(),
 	content: text().notNull(), // text of the notification
 	link: text(), // where to navigate when clicked
 	isRead: integer("is_read").default(0).notNull(), // 0 for false, 1 for true

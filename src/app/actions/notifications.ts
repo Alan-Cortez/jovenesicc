@@ -28,6 +28,7 @@ export async function getNotificationsAction() {
         id: notifications.id,
         type: notifications.type,
         content: notifications.content,
+        title: notifications.title,
         link: notifications.link,
         isRead: notifications.isRead,
         createdAt: notifications.createdAt,
@@ -82,6 +83,7 @@ export async function markAllNotificationsAsReadAction() {
 
 // Utility to create a notification (Server Side internal use only)
 export async function createNotification(data: {
+  title?: string;
   userId: number;
   actorId?: number;
   type: string;
@@ -94,6 +96,8 @@ export async function createNotification(data: {
       actorId: data.actorId,
       type: data.type,
       content: data.content,
+      title: data.title || 'Sistema',
+      title: '',
       link: data.link || null,
       isRead: 0
     });

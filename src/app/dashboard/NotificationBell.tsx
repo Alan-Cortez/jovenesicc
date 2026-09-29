@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getNotificationsAction, markNotificationAsReadAction, markAllNotificationsAsReadAction } from '@/app/actions/notifications';
 import { Bell, Heart, MessageSquare, Gift, Award, ShieldAlert, CheckCircle, Info, ArrowLeft } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './notification.module.css';
@@ -12,6 +13,12 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const bellRef = useRef<HTMLButtonElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const router = useRouter();
 
   const fetchNotifs = async () => {
@@ -28,7 +35,7 @@ export default function NotificationBell() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && bellRef.current && !bellRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
@@ -86,8 +93,9 @@ export default function NotificationBell() {
   };
 
   return (
-    <div className={styles.wrapper} ref={dropdownRef}>
+    <div className={styles.wrapper}>
       <button 
+        ref={bellRef}
         className={styles.bellBtn}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -99,8 +107,8 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {isOpen && (
-        <div className={styles.dropdown}>
+      {isOpen && mounted && createPortal(
+        <div className={styles.dropdown} ref={dropdownRef}>
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>
@@ -172,7 +180,7 @@ export default function NotificationBell() {
             <span className={styles.footerText}>Jóvenes CON TODO</span>
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }
