@@ -97,7 +97,6 @@ export async function createNotification(data: {
       type: data.type,
       content: data.content,
       title: data.title || 'Sistema',
-      title: '',
       link: data.link || null,
       isRead: 0
     });
