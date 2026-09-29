@@ -21,6 +21,7 @@ export async function updateProfileSettingsAction(formData: FormData) {
   }
 
   const name = formData.get('name') as string;
+  const bio = formData.get('bio') as string;
   const newPassword = formData.get('password') as string;
   const avatarFile = formData.get('avatar') as File;
   const avatarBase64 = formData.get('avatarBase64') as string;
@@ -36,6 +37,7 @@ export async function updateProfileSettingsAction(formData: FormData) {
   try {
     const updateData: any = { 
       name, 
+      bio,
       email: email || null,
       phone: phone || null,
       birthDate: birthDate || null,

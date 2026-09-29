@@ -10,6 +10,7 @@ type UserData = {
   name: string;
   email: string;
   matricula: string;
+  bio: string | null;
   role: string;
   avatar: string | null;
   groupId: number | null;
@@ -130,7 +131,7 @@ export default function PerfilClient({
               <div className={styles.panel}>
                 <h3 className={styles.panelTitle}>Editar perfil</h3>
                 <PerfilSettingsForm
-                  initialName={user.name}
+                  initialName={user.name}\n                    initialBio={user.bio}
                   initialAvatar={user.avatar}
                   initialEmail={user.email}
                   initialPhone={(user as any).phone}
@@ -190,8 +191,7 @@ export default function PerfilClient({
           <div className={styles.userInfo}>
             <h1 className={styles.userName}>{user.name}</h1>
             <p className={styles.userSub}>
-              {ROLE_LABELS[user.role] ?? user.role}
-              {' · '}{user.groupName}
+              {user.bio || 'Sin descripción'}
             </p>
             <button onClick={() => setIsEditing(true)} className={styles.filterBtn} style={{ marginTop: '12px', background: 'var(--color-primary)', color: 'var(--color-tertiary)', border: 'none' }}>
               Editar Perfil
@@ -252,10 +252,7 @@ export default function PerfilClient({
                     <span className={styles.infoLabel}>Nombre</span>
                     <span className={styles.infoValue}>{user.name}</span>
                   </li>
-                  <li>
-                    <span className={styles.infoLabel}>Rol</span>
-                    <span className={styles.infoValue}>{ROLE_LABELS[user.role] ?? user.role}</span>
-                  </li>
+                  
                   <li>
                     <span className={styles.infoLabel}>Grupo</span>
                     <span className={styles.infoValue}>{user.groupName}</span>
@@ -266,14 +263,8 @@ export default function PerfilClient({
                       <span className={styles.infoValue}>{user.email}</span>
                     </li>
                   )}
-                  <li>
-                    <span className={styles.infoLabel}>Miembro desde</span>
-                    <span className={styles.infoValue}>{formatDate(user.joinedAt)}</span>
-                  </li>
-                  <li>
-                    <span className={styles.infoLabel}>Privacidad</span>
-                    <span className={styles.infoValue}>Perfil privado</span>
-                  </li>
+                  
+                  
                 </ul>
               </div>
 

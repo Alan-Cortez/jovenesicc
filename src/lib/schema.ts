@@ -28,6 +28,7 @@ export const users = sqliteTable("users", {
 	name: text().notNull(),
 	email: text(),
 	matricula: text(),
+	bio: text(),
 	passwordHash: text("password_hash").notNull(),
 	role: text().default("joven").notNull(),
 	avatar: text(),

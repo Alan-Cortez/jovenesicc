@@ -232,6 +232,7 @@ export default async function PerfilPage() {
     phone: user.phone ?? null,
     birthDate: user.birthDate ?? null,
     matricula: user.matricula ?? '',
+    bio: user.bio ?? null,
     role: user.role,
     avatar: user.avatar ?? null,
     groupId: user.groupId ?? null,

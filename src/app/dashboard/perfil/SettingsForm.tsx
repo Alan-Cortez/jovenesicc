@@ -6,6 +6,7 @@ import { updateProfileSettingsAction } from '@/app/actions/user';
 export default function PerfilSettingsForm({ 
   initialName, 
   initialAvatar,
+  initialBio,
   initialEmail,
   initialPhone,
   initialBirthDate,
@@ -13,6 +14,7 @@ export default function PerfilSettingsForm({
 }: { 
   initialName: string, 
   initialAvatar: string | null,
+  initialBio?: string | null,
   initialEmail?: string | null,
   initialPhone?: string | null,
   initialBirthDate?: string | null,
@@ -96,6 +98,12 @@ export default function PerfilSettingsForm({
         <input type="file" accept="image/*" className="input-field" style={{ backgroundColor: 'var(--glass-bg)' }} onChange={handleFileChange} />
         {compressedAvatar && <input type="hidden" name="avatarBase64" value={compressedAvatar} />}
         <span style={{ fontSize: '0.7rem', color: '#63657a', marginTop: '4px', display: 'block' }}>Selecciona una imagen desde tu dispositivo.</span>
+      </div>
+
+      <div>
+        <label style={{ display: 'block', fontSize: '0.8rem', color: '#a0aab2', marginBottom: '8px' }}>Presentación</label>
+        <textarea name="bio" defaultValue={initialBio || ''} className="input-field" placeholder="Agrega una breve descripción..." rows={3} maxLength={150} style={{ resize: 'vertical' }}></textarea>
+        <span style={{ fontSize: '0.7rem', color: '#63657a', marginTop: '4px', display: 'block' }}>Máximo 150 caracteres.</span>
       </div>
 
       <div>
