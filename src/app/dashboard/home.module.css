@@ -463,4 +463,21 @@
   .banner { height: 200px; }
   .bannerHeadline { font-size: 1.6rem; }
   .bannerOverlay { padding: 20px 16px; }
+
+  .greetCard {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+  .greetText {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .greetLink {
+    width: 100%;
+    text-align: center;
+  }
+  .greetName {
+    font-size: 1.3rem !important;
+  }
 }

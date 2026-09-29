@@ -133,7 +133,7 @@ export default function DashboardHomeClient({
             )}
           </div>
           <div className={styles.greetText}>
-            <h2 className={styles.greetName}>Hola, {userName}</h2>
+            <div className={styles.greetName}>Hola, {userName}</div>
             <p className={styles.greetDetail}>
               Nivel {userLevel} · {userXp} XP · Racha de {userStreak} {userStreak === 1 ? 'dia' : 'dias'}
             </p>
