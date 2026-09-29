@@ -39,31 +39,52 @@
 
 .dropdown {
   position: fixed;
-  top: 110px;
-  left: 260px;
-  width: 340px;
-  background: var(--color-secondary);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  top: 0;
+  left: 240px;
+  width: 360px;
+  height: 100vh;
+  max-height: 100vh;
+  background: var(--color-tertiary);
+  border-left: 1px solid var(--glass-border);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: 10px 0 30px rgba(0,0,0,0.5);
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  max-height: 480px;
-  overflow: hidden;
+  animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .header {
-  padding: 16px;
+  padding: 24px 20px;
   border-bottom: 1px solid var(--glass-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-main);
+  cursor: pointer;
+  display: none; /* Oculto en PC */
+  padding: 0;
+}
+
 .title {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--color-text-main);
 }
@@ -72,7 +93,7 @@
   background: transparent;
   border: none;
   color: #1da1f2;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -80,30 +101,31 @@
 .list {
   flex: 1;
   overflow-y: auto;
+  padding: 8px 0;
 }
 
 .empty {
   padding: 32px;
   text-align: center;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .item {
   display: flex;
-  gap: 12px;
-  padding: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  gap: 14px;
+  padding: 16px 20px;
   transition: background 0.2s;
   position: relative;
+  cursor: pointer;
 }
 
 .itemUnread {
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.03);
 }
 
 .item:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
 }
 
 .avatarWrapper {
@@ -112,15 +134,16 @@
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid var(--glass-border);
 }
 
 .avatarFallback {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255,255,255,0.1);
   display: flex;
@@ -133,7 +156,7 @@
   position: absolute;
   bottom: -4px;
   right: -4px;
-  border: 2px solid var(--color-secondary);
+  border: 2px solid var(--color-tertiary);
   border-radius: 50%;
 }
 
@@ -142,18 +165,18 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
-  padding-right: 12px;
+  padding-right: 16px;
 }
 
 .text {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--color-text-main);
   line-height: 1.4;
 }
 
 .time {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
 }
 
 .timeUnread {
@@ -171,28 +194,48 @@
   background: #1da1f2;
   border-radius: 50%;
   position: absolute;
-  right: 16px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
 }
 
 .footer {
-  padding: 12px;
+  padding: 16px;
   text-align: center;
   border-top: 1px solid var(--glass-border);
   background: rgba(0,0,0,0.2);
 }
 
 .footerText {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
 }
 
 @media (max-width: 768px) {
   .dropdown {
-    left: 16px;
-    right: 16px;
-    width: auto;
-    top: 80px; /* Debajo del header de movil */
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+    z-index: 999999; /* Por encima de todo en móvil */
+    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  @keyframes slideInUp {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .backBtn {
+    display: flex; /* Mostrar en móvil */
+  }
+
+  .header {
+    padding: 16px;
   }
 }

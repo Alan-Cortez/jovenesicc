@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { getNotificationsAction, markNotificationAsReadAction, markAllNotificationsAsReadAction } from '@/app/actions/notifications';
-import { Bell, Heart, MessageSquare, Gift, Award, ShieldAlert, CheckCircle, Info } from 'lucide-react';
+import { Bell, Heart, MessageSquare, Gift, Award, ShieldAlert, CheckCircle, Info, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './notification.module.css';
@@ -103,7 +103,12 @@ export default function NotificationBell() {
         <div className={styles.dropdown}>
           {/* Header */}
           <div className={styles.header}>
-            <h3 className={styles.title}>Notificaciones</h3>
+            <div className={styles.headerLeft}>
+              <button className={styles.backBtn} onClick={() => setIsOpen(false)}>
+                <ArrowLeft size={24} />
+              </button>
+              <h3 className={styles.title}>Notificaciones</h3>
+            </div>
             {unreadCount > 0 && (
               <button onClick={handleMarkAll} className={styles.markReadBtn}>
                 Marcar leídas
