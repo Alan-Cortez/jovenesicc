@@ -19,7 +19,7 @@ export default async function AdminGruposPage() {
   }
 
   const result = await getGroupsWithMembersAction();
-  const data = result.success && result.data ? result.data : { groups: [], unassigned: [] };
+  const data = result.success && result.data ? result.data : { groups: [], unassigned: [], sinGrupoId: null };
 
-  return <GruposClient groups={data.groups} unassigned={data.unassigned} />;
+  return <GruposClient groups={data.groups} unassigned={data.unassigned} sinGrupoId={data.sinGrupoId} />;
 }

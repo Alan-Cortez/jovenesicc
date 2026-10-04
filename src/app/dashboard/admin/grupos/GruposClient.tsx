@@ -15,10 +15,12 @@ type Group = { id: number; name: string; description: string | null; members: Me
 
 export default function GruposClient({ 
   groups, 
-  unassigned 
+  unassigned, 
+  sinGrupoId
 }: { 
   groups: Group[]; 
-  unassigned: Member[] 
+  unassigned: Member[];
+  sinGrupoId?: number | null;
 }) {
   const [loading, setLoading] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(groups[0]?.id ?? null);
@@ -185,7 +187,14 @@ export default function GruposClient({
 
           {/* Sin Grupo */}
           <div className="glass-panel" style={{ backgroundColor: 'var(--glass-bg)' }}>
-            <h3 style={{ fontSize: '1rem', marginBottom: '12px' }}>Sin Grupo ({unassigned.length})</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h3 style={{ fontSize: '1rem', margin: 0 }}>Sin Grupo ({unassigned.length})</h3>
+              {sinGrupoId && unassigned.length > 0 && (
+                <Link href={`/dashboard/admin/grupos/${sinGrupoId}/evaluar`} style={{ backgroundColor: '#4ae290', color: '#000', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', textDecoration: 'none' }}>
+                  Evaluar
+                </Link>
+              )}
+            </div>
             {unassigned.length === 0 ? (
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '8px 0' }}>Todos los usuarios están asignados.</p>
             ) : (

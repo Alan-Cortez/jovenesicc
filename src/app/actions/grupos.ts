@@ -145,7 +145,16 @@ export async function getGroupsWithMembersAction() {
   if (!admin) return { error: 'No autorizado' };
 
   try {
-    const allGroups = await db.select().from(groups);
+    let allGroups = await db.select().from(groups);
+    
+    // Ensure _SIN_GRUPO_ exists
+    let sinGrupoGroup = allGroups.find(g => g.name === '_SIN_GRUPO_');
+    if (!sinGrupoGroup) {
+      const res = await db.insert(groups).values({ name: '_SIN_GRUPO_', description: 'Virtual', leaderId: admin.id }).returning();
+      sinGrupoGroup = res[0];
+      allGroups.push(sinGrupoGroup);
+    }
+
     const allUsers = await db.select({
       id: users.id,
       name: users.name,
@@ -157,7 +166,7 @@ export async function getGroupsWithMembersAction() {
     const meetings = await db.select().from(groupMeetings);
     const attendances = await db.select().from(groupMeetingAttendance);
 
-    const groupsWithMembers = allGroups.map(g => {
+    const groupsWithMembers = allGroups.filter(g => g.name !== '_SIN_GRUPO_').map(g => {
       const currentMembers = allUsers.filter(u => u.groupId === g.id);
       const currentMemberIds = currentMembers.map(u => u.id);
 
@@ -186,7 +195,7 @@ export async function getGroupsWithMembersAction() {
 
     const unassigned = allUsers.filter(u => !u.groupId);
 
-    return { success: true, data: { groups: groupsWithMembers, unassigned } };
+    return { success: true, data: { groups: groupsWithMembers, unassigned, sinGrupoId: sinGrupoGroup.id } };
   } catch (error) {
     console.error('Error fetching groups:', error);
     return { error: 'Error al cargar los grupos.' };

@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { groups, users, groupMeetings, groupMeetingAttendance } from '@/lib/schema';
-import { eq } from 'drizzle-orm';
+import { eq, isNull } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import EvaluarClient from './EvaluarClient';
 import Link from 'next/link';
@@ -40,7 +40,7 @@ export default async function EvaluarGrupoPage({ params }: { params: Promise<{ i
     id: users.id,
     name: users.name,
     avatar: users.avatar
-  }).from(users).where(eq(users.groupId, groupId));
+  }).from(users).where(groupData.name === '_SIN_GRUPO_' ? isNull(users.groupId) : eq(users.groupId, groupId));
 
   const { groupGuests } = await import('@/lib/schema');
   const existingGuests = await db.select().from(groupGuests).where(eq(groupGuests.groupId, groupId));
