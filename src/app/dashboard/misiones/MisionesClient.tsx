@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { submitMissionEvidenceAction } from '@/app/actions/features';
 import styles from './misiones.module.css';
+import { Target, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
 
 type Task = {
   id: number;
@@ -15,7 +16,7 @@ type Task = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  submitted: 'Enviada — pendiente de revision',
+  submitted: 'Enviada — pendiente de revisión',
   approved: 'Aprobada',
   rejected: 'Rechazada — puedes reenviar',
   pending: 'Pendiente',
@@ -31,7 +32,10 @@ export default function MisionesClient({ userId, tasks }: { userId: number; task
     <div className={styles.root}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Misiones</h1>
+          <h1 className={styles.pageTitle} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Target size={32} style={{ color: 'var(--color-text-muted)' }} />
+            Misiones
+          </h1>
           <p className={styles.pageSub}>
             {pending.length} pendiente{pending.length !== 1 ? 's' : ''} · {done.length} completada{done.length !== 1 ? 's' : ''}
           </p>
@@ -137,8 +141,13 @@ function TaskCard({
           <button
             className={styles.evidenceBtn}
             onClick={onToggle}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
-            {isOpen ? 'Cancelar' : task.evidenceType === 'none' ? 'Marcar como completada' : 'Subir evidencia'}
+            {isOpen ? 'Cancelar' : task.evidenceType === 'none' ? (
+              <><CheckCircle2 size={16} /> Marcar como completada</>
+            ) : (
+              <><Upload size={16} /> Subir evidencia</>
+            )}
           </button>
 
           {isOpen && (
