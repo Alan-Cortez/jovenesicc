@@ -6,6 +6,7 @@ import { eq, and } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { updatePlanDayAction } from '@/app/actions/admin';
+import VerseInput from '@/components/VerseInput';
 
 export default async function EditPlanDayPage({ params }: { params: Promise<{ id: string, dayId: string }> }) {
   const cookieStore = await cookies();
@@ -65,10 +66,7 @@ export default async function EditPlanDayPage({ params }: { params: Promise<{ id
             <textarea name="content" defaultValue={day.content || ''} className="input-field" placeholder="Escribe aquí la reflexión del día..." rows={8} style={{ resize: 'vertical' }}></textarea>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Porciones Bíblicas (separadas por coma) *</label>
-            <input type="text" name="bibleRefs" defaultValue={day.bibleRefs} className="input-field" placeholder="Ej. Proverbios 3:5-8, Juan 3:16" required />
-          </div>
+          <VerseInput defaultValue={day.bibleRefs} />
 
           <div>
             <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Recompensa por lectura (XP) *</label>
