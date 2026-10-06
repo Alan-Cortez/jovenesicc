@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { updateMissionAction } from '@/app/actions/admin';
 
-export default async function EditarMisionPage({ params }: { params: { id: string } }) {
+export default async function EditarMisionPage({ params }: { params: Promise<{ id: string }> }) {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('session')?.value;
   if (!sessionToken) redirect('/login');
@@ -20,7 +20,8 @@ export default async function EditarMisionPage({ params }: { params: { id: strin
     redirect('/login');
   }
 
-  const taskId = parseInt(params.id, 10);
+  const { id } = await params;
+  const taskId = parseInt(id, 10);
   const missionResult = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1);
   const mission = missionResult[0];
 
